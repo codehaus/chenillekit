@@ -1,0 +1,7 @@
+#How releases are versioned.
+
+= Introduction =
+The Chenille Kit started life very early in the Tapestry 5 alpha cycle, with a simple name: _Tapestry 5 Components_ (or _t5c_). Because of the radical changes that often occurred between alphas a versioning scheme evolved that indicated which alpha release it was compatible with. For example, Tapestry version *5.0.6* dictated a t5c version of *0.5.6*. Now that the project has taken on a more solid identity, the versions will reflect the only the evolution of itself and not be tied to Tapestry's.
+
+= Versioning Scheme =
+Like Tapestry 5 (see [http://wiki.apache.org/tapestry/ReleaseNumbering _New Numbering_]), the Chenille Kit follows the versioning scheme as specified by the [http://apr.apache.org/versioning.html Apache Portable Runtime Project].
