@@ -1,3 +1,4 @@
+#labels Featured
 #How chenille kit releases are versioned.
 
 = Introduction =
