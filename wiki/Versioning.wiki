@@ -1,5 +1,5 @@
+#summary How chenille kit releases are versioned.
 #labels Featured
-#How chenille kit releases are versioned.
 
 = Introduction =
 The Chenille Kit started life very early in the Tapestry 5 alpha cycle, with a simple name: _Tapestry 5 Components_ (or _t5c_). Because of the radical changes that often occurred between alphas a versioning scheme evolved that indicated which alpha release it was compatible with. For example, Tapestry version *5.0.6* dictated a t5c version of *0.5.6*. Now that the project has taken on a more solid identity, the versions will reflect the only the evolution of itself and not be tied to Tapestry's.
