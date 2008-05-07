@@ -1,4 +1,4 @@
-#suggestions for namespacing chenillekit javascript (draft)
+#summary suggestions for namespacing chenillekit javascript (draft)
 
 {{{
 //Declare the name space in a core file (chenillekit.js)
