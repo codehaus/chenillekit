@@ -1,0 +1,20 @@
+#suggestions for namespacing chenillekit javascript (draft)
+
+{{{
+//Declare the name space in a core file (chenillekit.js)
+var Ck = {};
+
+// additional base code
+}}}
+
+{{{
+//Declare an object within the namespace in a subsequent file.
+var Ck.SlideShow = Class.create();
+Ck.SlideShow.prototype = {
+
+    initialize: function() {
+        //construct
+    }
+
+}
+}}}
