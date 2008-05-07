@@ -1,0 +1,13 @@
+#summary overview of the module structure (draft)
+
+{{{
+[root]
+   |
+   |------[tapestry]
+   |
+   |------[hibernate]
+   |
+   |------[hivemind]
+}}}
+
+whats happen with services like {{{ImageService}}} or {{{GoogleMapService}}}?
