@@ -6,22 +6,26 @@
         |------[tapestry]
         |    |
         |    |------[core]
-        |         |
-        |         |------[components]
-        |         |          |
-        |         |          |------[editor (resources: javascript, images, etc)]
-        |         |          |
-        |         |          |------[chart (resources: javascript, images, etc)]
-        |         |          |
-        |         |          |------[datepicker (resources: javascript, images, etc)]
-        |         |
-        |         |------[mixins]
-        |         |
-        |         |------[pages]
-        |         |
-        |         |------[services]
-        |                     |
-        |                     |------[impl]
+        |    |        |
+        |    |        |------[components]
+        |    |        |          |
+        |    |        |          |------[editor (resources: javascript, images, etc)]
+        |    |        |          |
+        |    |        |          |------[chart (resources: javascript, images, etc)]
+        |    |        |          |
+        |    |        |          |------[datepicker (resources: javascript, images, etc)]
+        |    |        |
+        |    |        |------[mixins]
+        |    |        |
+        |    |        |------[pages]
+        |    |        |
+        |    |        |------[services]
+        |    |                   |
+        |    |                   |------[impl]
+        |    |
+        |    |------[spring]
+        |    |
+        |    |------[imaging]
         |
         |------[hibernate]
         |
