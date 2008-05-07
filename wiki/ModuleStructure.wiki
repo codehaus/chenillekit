@@ -10,4 +10,4 @@
    |------[hivemind]
 }}}
 
-whats happen with services like {{{ImageService}}} or {{{GoogleMapService}}}?
+whats happen with services like `ImageService` or `GoogleMapService` ?
