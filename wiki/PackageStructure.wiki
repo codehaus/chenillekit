@@ -1,23 +1,25 @@
-#summary overview of the package structure (draft)
+#summary overview of the package structure (draft 2)
 
 {{{
 [org.chenillekit]
         |
         |------[tapestry]
-        |          |
-        |          |------[components]
-        |          |          |
-        |          |          |------[editor (resources: javascript, images, etc)]
-        |          |          |
-        |          |          |------[chart (resources: javascript, images, etc)]
-        |          |          |
-        |          |          |------[datepicker (resources: javascript, images, etc)]
-        |          |
-        |          |------[mixins]
-        |          |
-        |          |------[pages]
-        |          |
-        |          |------[services]
+        |    |
+        |    |------[core]
+        |         |
+        |         |------[components]
+        |         |          |
+        |         |          |------[editor (resources: javascript, images, etc)]
+        |         |          |
+        |         |          |------[chart (resources: javascript, images, etc)]
+        |         |          |
+        |         |          |------[datepicker (resources: javascript, images, etc)]
+        |         |
+        |         |------[mixins]
+        |         |
+        |         |------[pages]
+        |         |
+        |         |------[services]
         |                     |
         |                     |------[impl]
         |
