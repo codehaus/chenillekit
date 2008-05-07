@@ -4,36 +4,36 @@
 [org.chenillekit]
         |
         |------[tapestry]
-        |    |
-        |    |------[core]
-        |    |        |
-        |    |        |------[components]
-        |    |        |          |
-        |    |        |          |------[editor (resources: javascript, images, etc)]
-        |    |        |          |
-        |    |        |          |------[chart (resources: javascript, images, etc)]
-        |    |        |          |
-        |    |        |          |------[datepicker (resources: javascript, images, etc)]
-        |    |        |
-        |    |        |------[mixins]
-        |    |        |
-        |    |        |------[pages]
-        |    |        |
-        |    |        |------[services]
-        |    |                   |
-        |    |                   |------[impl]
-        |    |
-        |    |------[spring]
-        |    |        |
-        |    |        |------[services]
-        |    |                   |
-        |    |                   |------[impl]
-        |    |
-        |    |------[imaging]
-        |             |
-        |             |------[services]
-        |                        |
-        |                        |------[impl]
+        |          |
+        |          |------[core]
+        |          |        |
+        |          |        |------[components]
+        |          |        |          |
+        |          |        |          |------[editor (resources: javascript, images, etc)]
+        |          |        |          |
+        |          |        |          |------[chart (resources: javascript, images, etc)]
+        |          |        |          |
+        |          |        |          |------[datepicker (resources: javascript, images, etc)]
+        |          |        |
+        |          |        |------[mixins]
+        |          |        |
+        |          |        |------[pages]
+        |          |        |
+        |          |        |------[services]
+        |          |                   |
+        |          |                   |------[impl]
+        |          |
+        |          |------[spring]
+        |          |        |
+        |          |        |------[services]
+        |          |                   |
+        |          |                   |------[impl]
+        |          |
+        |          |------[imaging]
+        |                   |
+        |                   |------[services]
+        |                              |
+        |                              |------[impl]
         |
         |------[hibernate]
         |
