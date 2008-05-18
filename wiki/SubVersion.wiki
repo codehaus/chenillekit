@@ -11,7 +11,8 @@
 *.tml = svn:eol-style=LF;svn:keywords=Id
 *.xml = svn:eol-style=LF;svn:keywords=Id
 *.properties = svn:eol-style=LF;svn:keywords=Id
-*.groovy = svn:eol-style=LF;svn:keywords=Id
+*.groovy = svn:eol-style=LF;svn:keywords=Id;svn:executable
+*.gvy = svn:eol-style=LF;svn:keywords=Id;svn:executable
 *.txt = svn:eol-style=LF;svn:keywords=Id
 *.sh = svn:eol-style=LF;svn:keywords=Id;svn:executable
 *.bat = svn:eol-style=CRLF;svn:keywords=Id;svn:executable
