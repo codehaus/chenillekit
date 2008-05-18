@@ -1,0 +1,19 @@
+#summary subversion client settings.
+
+=== client settings ===
+{{{
+### Section for configuring automatic properties.
+[auto-props]
+*.png = svn:mime-type=image/png
+*.jpg = svn:mime-type=image/jpeg
+*.java = svn:eol-style=LF;svn:keywords=Id
+*.html = svn:eol-style=LF;svn:keywords=Id
+*.tml = svn:eol-style=LF;svn:keywords=Id
+*.xml = svn:eol-style=LF;svn:keywords=Id
+*.properties = svn:eol-style=LF;svn:keywords=Id
+*.groovy = svn:eol-style=LF;svn:keywords=Id
+*.txt = svn:eol-style=LF;svn:keywords=Id
+*.sh = svn:eol-style=LF;svn:keywords=Id;svn:executable
+*.bat = svn:eol-style=CRLF;svn:keywords=Id;svn:executable
+*.jar = svn:mime-type=application/java-archive
+}}}
