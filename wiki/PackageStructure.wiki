@@ -38,4 +38,10 @@
         |------[hibernate]
         |
         |------[hivemind]
+        |
+        |------[quartz]
+                   |
+                   |------[services]
+                            |
+                            |------[impl]
 }}}
