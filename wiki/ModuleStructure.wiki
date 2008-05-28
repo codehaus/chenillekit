@@ -3,11 +3,15 @@
 {{{
 [root]
    |
-   |------[tapestry]
+   |------[chenillekit-tapestry]
    |
-   |------[hibernate]
+   |------[chenillekit-hibernate]
    |
-   |------[hivemind]
+   |------[chenillekit-hivemind]
+   |
+   |------[chenillekit-quartz]
+   |
+   |------[chenillekit-demo]
 }}}
 
 whats happen with services like `ImageService` or `GoogleMapService` ?
