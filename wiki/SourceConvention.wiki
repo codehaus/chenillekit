@@ -1,4 +1,4 @@
-#summary overview of source conventions (draft).
+#summary overview of source conventions.
 
 === copyrights ===
 
@@ -28,9 +28,19 @@ IntelliJ has a great comparison view: Cmd-9 to see the local changes, the Cmd-D 
 === class header ===
 {{{
 /**
- * short class description.
+ * class description.
  *
  * @author <a href="mailto:your@email.com">my name</a>
  * @version $Id$
+ */
+}}}
+
+=== method header ===
+{{{
+/**
+ * method description.
+ *
+ * @param myParameter my parameter description
+ * @return this method returns a value
  */
 }}}
