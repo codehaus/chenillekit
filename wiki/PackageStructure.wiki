@@ -1,4 +1,4 @@
-#summary overview of the package structure (draft 2)
+#summary overview of the package structure
 
 {{{
 [org.chenillekit]
