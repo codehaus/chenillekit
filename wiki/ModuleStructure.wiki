@@ -1,17 +1,37 @@
-#summary overview of the module structure (draft)
+#summary overview of the module structure
 
 {{{
 [root]
    |
-   |------[chenillekit-tapestry]
+   |------[chenillekit-access]
+   |
+   |------[chenillekit-core]
+   |
+   |------[chenillekit-demo]
+   |
+   |------[chenillekit-google]
    |
    |------[chenillekit-hibernate]
    |
    |------[chenillekit-hivemind]
    |
+   |------[chenillekit-image]
+   |
+   |------[chenillekit-ldap]
+   |
+   |------[chenillekit-lucene]
+   |
+   |------[chenillekit-mail]
+   |
    |------[chenillekit-quartz]
    |
-   |------[chenillekit-demo]
+   |------[chenillekit-reports]
+   |
+   |------[chenillekit-scripting]
+   |
+   |------[chenillekit-tapestry]
+   |
+   |------[chenillekit-template]
+   |
+   |------[chenillekit-test]
 }}}
-
-whats happen with services like `ImageService` or `GoogleMapService` ?
