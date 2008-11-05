@@ -1,5 +1,99 @@
 #summary overview of source conventions.
 
+This document describes how developers and contributors should write code. The reasoning of these styles and conventions is mainly for consistency, readability and maintainability reasons.
+
+=Generic Code Style And Convention=
+
+All working files (java, xml, others) should respect the following conventions:
+
+ * License Header: Always add the current ASF license header in all versionned files.
+ * Trailing Whitespaces: Remove all trailing whitespaces. If your are an Eclipse user, you could use the Anyedit Eclipse Plugin.
+
+and the following style:
+
+ * Indentation: Always use 2 space indents and never use tabs!
+ * Line wrapping: Always use a 120-column line width.
+
+Note: The specific styles and conventions, listed in the next sections, could override these generic rules.
+
+===Java===
+Java Code Style
+
+The style for Java is mainly:
+
+ * White space: One space after control statements and between arguments (i.e. if ( foo ) instead of if(foo)), myFunc( foo, bar, baz ) instead of myFunc(foo,bar,baz)). No spaces after methods names (i.e. void myMethod(), myMethod( "foo" ))
+ * Indentation: Always use 4 space indents and never use tabs!
+ * Blocks: Always enclose with a new line brace.
+ * Readingness: Specify code grouping members, if needed. For instance in a Mojo class, you could have:
+
+{{{
+      public class MyMojo
+      {
+          // ----------------------------------------------------------------------
+          // Mojo components
+          // ----------------------------------------------------------------------
+
+          /**
+           * Artifact factory.
+           *
+           * @component
+           */
+          private ArtifactFactory artifactFactory;
+
+          ...
+
+          // ----------------------------------------------------------------------
+          // Mojo parameters
+          // ----------------------------------------------------------------------
+
+          /**
+           * The POM.
+           *
+           * @parameter expression="${project}"
+           * @required
+           */
+          private MavenProject project;
+
+          ...
+
+          // ----------------------------------------------------------------------
+          // Mojo options
+          // ----------------------------------------------------------------------
+          ...
+
+          // ----------------------------------------------------------------------
+          // Public methods
+          // ----------------------------------------------------------------------
+
+          /**
+           * {@inheritDoc}
+           */
+          public void execute()
+              throws MojoExecutionException
+          {
+            ...
+          }
+
+          // ----------------------------------------------------------------------
+          // Protected methods
+          // ----------------------------------------------------------------------
+          ...
+
+          // ----------------------------------------------------------------------
+          // Private methods
+          // ----------------------------------------------------------------------
+          ...
+
+          // ----------------------------------------------------------------------
+          // Static methods
+          // ----------------------------------------------------------------------
+          ...
+      }
+}}}
+
+ * Indentation: Always use 2 space indents, unless you're wrapping a line in which case you should indent 4 spaces or indent to line up arguments.
+ * Line wrapping: Always use a 120-column line width for Java code and Javadoc.
+
 === copyrights ===
 
 The ASF copyright must appear on all Java source files. Technically it should appear on all non-binary files in the repository.
