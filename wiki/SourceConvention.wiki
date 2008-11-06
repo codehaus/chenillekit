@@ -11,8 +11,7 @@ All working files (java, xml, others) should respect the following conventions:
 
 and the following style:
 
- * Indentation: Always use 2 space indents and never use tabs!
-                _Massimo: I feel tabs would be better but as i don't feel that stronger about that i can live with that_
+ * Indentation: Always use Tabs indents and never use spaces!
  * Line wrapping: Always use a 120-column line width.
 
 Note: The specific styles and conventions, listed in the next sections, could override these generic rules.
@@ -25,77 +24,6 @@ The style for Java is mainly:
  * White space: One space after control statements and between arguments (i.e. if ( foo ) instead of if(foo)), myFunc( foo, bar, baz ) instead of myFunc(foo,bar,baz)). No spaces after methods names (i.e. void myMethod(), myMethod( "foo" ))
  * Indentation: Always use 4 space indents and never use tabs!
  * Blocks: Always enclose with a new line brace.
- * Readingness: Specify code grouping members, if needed. For instance in a Mojo class, you could have:
-
-{{{
-      public class MyMojo
-      {
-          // ----------------------------------------------------------------------
-          // Mojo components
-          // ----------------------------------------------------------------------
-
-          /**
-           * Artifact factory.
-           *
-           * @component
-           */
-          private ArtifactFactory artifactFactory;
-
-          ...
-
-          // ----------------------------------------------------------------------
-          // Mojo parameters
-          // ----------------------------------------------------------------------
-
-          /**
-           * The POM.
-           *
-           * @parameter expression="${project}"
-           * @required
-           */
-          private MavenProject project;
-
-          ...
-
-          // ----------------------------------------------------------------------
-          // Mojo options
-          // ----------------------------------------------------------------------
-          ...
-
-          // ----------------------------------------------------------------------
-          // Public methods
-          // ----------------------------------------------------------------------
-
-          /**
-           * {@inheritDoc}
-           */
-          public void execute()
-              throws MojoExecutionException
-          {
-            ...
-          }
-
-          // ----------------------------------------------------------------------
-          // Protected methods
-          // ----------------------------------------------------------------------
-          ...
-
-          // ----------------------------------------------------------------------
-          // Private methods
-          // ----------------------------------------------------------------------
-          ...
-
-          // ----------------------------------------------------------------------
-          // Static methods
-          // ----------------------------------------------------------------------
-          ...
-      }
-}}}
-
- _Massimo: Couldn't we just agree on an ordering instead of put that comments within code?_
-
- * Indentation: Always use 2 space indents, unless you're wrapping a line in which case you should indent 4 spaces or indent to line up arguments.
- * Line wrapping: Always use a 120-column line width for Java code and Javadoc.
 
 === copyrights ===
 
@@ -127,12 +55,9 @@ IntelliJ has a great comparison view: Cmd-9 to see the local changes, the Cmd-D 
 /**
  * class description.
  *
- * @author <a href="mailto:your@email.com">my name</a>
  * @version $Id$
  */
 }}}
-
-_Massimo: Would it be better to remove the author tag? If we feel it deserved we should put that in the source header_
 
 === method header ===
 {{{
