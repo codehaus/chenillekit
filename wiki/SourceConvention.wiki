@@ -12,6 +12,7 @@ All working files (java, xml, others) should respect the following conventions:
 and the following style:
 
  * Indentation: Always use 2 space indents and never use tabs!
+                _Massimo: I feel tabs would be better but as i don't feel that stronger about that i can live with that_
  * Line wrapping: Always use a 120-column line width.
 
 Note: The specific styles and conventions, listed in the next sections, could override these generic rules.
@@ -91,6 +92,8 @@ The style for Java is mainly:
       }
 }}}
 
+ _Massimo: Couldn't we just agree on an ordering instead of put that comments within code?_
+
  * Indentation: Always use 2 space indents, unless you're wrapping a line in which case you should indent 4 spaces or indent to line up arguments.
  * Line wrapping: Always use a 120-column line width for Java code and Javadoc.
 
@@ -128,6 +131,8 @@ IntelliJ has a great comparison view: Cmd-9 to see the local changes, the Cmd-D 
  * @version $Id$
  */
 }}}
+
+_Massimo: Would it be better to remove the author tag? If we feel it deserved we should put that in the source header_
 
 === method header ===
 {{{
