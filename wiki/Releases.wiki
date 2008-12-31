@@ -6,7 +6,7 @@
 Hi all,
   the !ChenilleKit team is pleased to announce the availability of the first release of the !ChenilleKit Project.
 
-The 1.0.0 release includes all the features present in the former project [http://code.google.com/p/tapestry5-components T5Components] from which the !ChenilleKit is born plus more features not present there.
+The 1.0.0 release includes all the features present in the former project [http://code.google.com/p/tapestry5-components T5Components] from which the !ChenilleKit is born plus more features not present there. This release is based on Tapestry5 5.0.18 release wich is the final GA release for Tapestry5 5.0 branch.
 
 Here is a comprehensive list of features available.
 
