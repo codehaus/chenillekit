@@ -3,9 +3,9 @@
 ==31/12/2008 Release 1.0.0 announce==
 
 Hi all,
-  the ChenilleKit team is pleased to announce the availability of the first release of the ChenilleKit Project.
+  the !ChenilleKit team is pleased to announce the availability of the first release of the !ChenilleKit Project.
 
-The 1.0.0 release includes all the features present in the former project T5Components from which the ChenilleKit is born plus more features not present there.
+The 1.0.0 release includes all the features present in the former project [http://code.google.com/p/tapestry5-components T5Components] from which the !ChenilleKit is born plus more features not present there.
 
 Here is a comprehensive list of features available.
 
@@ -27,7 +27,7 @@ Here is a comprehensive list of features available.
 Every feature is available as a separate module (Tapestry5 library).
 
 If you use maven as a build project system you can access these libraries using our repository.
-In your pom.xml file specify the ChenilleKit repository:
+In your pom.xml file specify the !ChenilleKit repository:
 
 {{{
 <repository>
@@ -39,7 +39,7 @@ In your pom.xml file specify the ChenilleKit repository:
 </repository>
 }}}
 
-Then you are able to set dependency on ChenilleKit libraries the usual way:
+Then you are able to set dependency on !ChenilleKit libraries the usual way:
 
 {{{
 <dependency>
@@ -57,12 +57,12 @@ Project and documentation site is available at:
 
     http://www.chenillekit.org
 
-This 1.0.0 release is considered beta and the ChenilleKit is following the Apache convention (the same as Tapestry5 project is doing) for software release so following releases will be voted to gain final/GA status release for 1.0 branch.
+This 1.0.0 release is considered beta and the !ChenilleKit is following the Apache convention (the same as Tapestry5 project is doing) for software release so following releases will be voted to gain final/GA status release for 1.0 branch.
 
 The current trunk (HEAD) will follow Tapestry 5.1 while we have created branches/1.0 to succeeding 1.0.x releases which will be based on Tapestry 5.0 branch releases.
 
 Feedback is always welcome.
 
-The ChenilleKit team would like to thank Sven Homburg for providing the box and Internet connectivity fro ChenilleKit.org domain and last but not least the original code of T5Components.
+The !ChenilleKit team would like to thank Sven Homburg for providing the box and Internet connectivity fro ChenilleKit.org domain and last but not least the original code of [http://code.google.com/p/tapestry5-components T5Components].
 
 Happy new year to everyone!
