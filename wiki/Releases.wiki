@@ -1,0 +1,68 @@
+=Releases Announcements=
+
+==31/12/2008 Release 1.0.0 announce==
+
+Hi all,
+  the ChenilleKit team is pleased to announce the availability of the first release of the ChenilleKit Project.
+
+The 1.0.0 release includes all the features present in the former project T5Components from which the ChenilleKit is born plus more features not present there.
+
+Here is a comprehensive list of features available.
+
+ * Core           core utilities we need for some of the following modules
+ * Access       library which provide access restriction constraints to Tapestry 5 web application
+ * Google       Google based services like geocoding, distance, etc
+ * Hibernate  some utility classes and services to simplify the life with Hibernate
+ * Hivemind   a bridge from/to Apache's [http://hivemind.apache.org HiveMind] to Apache's Tapestry5
+ * Image        a simple image scaling service
+ * LDAP         simple search service against a LDAP server
+ * Lucene      indexer and searcher service based on Apache's Lucene's full text engine.
+ * Mail           simple mail service based on Apache's Commons Email
+ * Quartz      [http://www.opensymphony.com/quartz Quartz] based scheduler services
+ * Reports      [http://jasperforge.org/plugins/project/project_home.php?group_id=102 Jasperreports] based reporting services
+ * Scripting   scripting service based on [http://jakarta.apache.org/bsf/index.html Apache's Bean Scripting Framework]
+ * Tapestry    collection of components and services for your [http://tapestry.apache.org/tapestry5 Apache's Tapestry5 Framework] based applications
+ * Template   [http://velocity.apache.orgApache's Velocity] and [http://freemarker.org FreeMarker] based template services 
+
+Every feature is available as a separate module (Tapestry5 library).
+
+If you use maven as a build project system you can access these libraries using our repository.
+In your pom.xml file specify the ChenilleKit repository:
+
+{{{
+<repository>
+    <id>chenillekit</id>
+    <url>http://www.chenillekit.org/mvnrepo/release</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+</repository>
+}}}
+
+Then you are able to set dependency on ChenilleKit libraries the usual way:
+
+{{{
+<dependency>
+    <groupId>org.chenillekit</groupId>
+    <artifactId>chenillekit-quartz</artifactId>
+    <version>1.0.0</version>
+</dependency>
+}}}
+
+If you're not using maven you can download the libraries from the project page:
+
+    http://code.google.com/p/chenillekit/
+
+Project and documentation site is available at:
+
+    http://www.chenillekit.org
+
+This 1.0.0 release is considered beta and the ChenilleKit is following the Apache convention (the same as Tapestry5 project is doing) for software release so following releases will be voted to gain final/GA status release for 1.0 branch.
+
+The current trunk (HEAD) will follow Tapestry 5.1 while we have created branches/1.0 to succeeding 1.0.x releases which will be based on Tapestry 5.0 branch releases.
+
+Feedback is always welcome.
+
+The ChenilleKit team would like to thank Sven Homburg for providing the box and Internet connectivity fro ChenilleKit.org domain and last but not least the original code of T5Components.
+
+Happy new year to everyone!
