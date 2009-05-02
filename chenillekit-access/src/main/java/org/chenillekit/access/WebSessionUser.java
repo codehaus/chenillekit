@@ -16,13 +16,21 @@ package org.chenillekit.access;
 
 /**
  *
- * @version $Id: WebSessionUser.java 447 2009-03-28 08:54:25Z mlusetti $
+ * @version $Id$
  */
 public interface WebSessionUser
-{	
-	public String getName();
-	
-	public int getRoleWeight();
+{
+	/**
+	 * get the role ids.
+	 *
+	 * @return role ids
+	 */
+	int getRoleWeight();
 
-	public String[] getGroups();
+	/**
+	 * get the group names.
+	 *
+	 * @return group names
+	 */
+	String[] getGroups();
 }

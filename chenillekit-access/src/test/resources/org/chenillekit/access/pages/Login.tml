@@ -26,7 +26,5 @@
 
 <t:login />
 
-<p><t:pagelink t:page="Start">Back to start</t:pagelink></p>
-
 </body>
 </html>

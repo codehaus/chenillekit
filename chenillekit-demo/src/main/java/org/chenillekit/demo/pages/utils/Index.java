@@ -12,16 +12,17 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-package org.chenillekit.access.pages;
+package org.chenillekit.demo.pages.utils;
 
-import org.chenillekit.access.annotations.Restricted;
+import org.apache.tapestry5.annotations.Component;
+
+import org.chenillekit.demo.components.LeftSideMenu;
 
 /**
-*
-* @version $Id: Start.java 380 2008-12-30 10:21:52Z mlusetti $
-*/
-@Restricted(role = 8)
-public class Invisible
+ * ChenilleKit demo application start page.
+ */
+public class Index
 {
-
+	@Component(parameters = {"menuName=utils"})
+	private LeftSideMenu menu;
 }

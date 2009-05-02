@@ -22,7 +22,6 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.services.Cookies;
 import org.chenillekit.access.ChenilleKitAccessConstants;
 import org.chenillekit.access.WebSessionUser;
 import org.chenillekit.access.services.AuthenticationService;
@@ -34,15 +33,11 @@ import org.chenillekit.access.services.AuthenticationService;
  */
 public class Login
 {
-	@SuppressWarnings("unused")
 	@ApplicationState
 	private WebSessionUser webSessionUser;
 	
 	@Inject
 	private Messages messages;
-	
-	@Inject
-	private Cookies cookies;
 	
 	@Inject @Local
 	private AuthenticationService authenticationService;
@@ -71,14 +66,12 @@ public class Login
 	
 	void onFailure()
 	{
-		// TODO What to do here?
+		// TODO What to do in here?
 	}
 	
 	void onSuccess()
 	{
 		webSessionUser = tmpUser;
-		
-		cookies.writeCookieValue(ChenilleKitAccessConstants.LOGIN_SUCCESSFUL_COOKIE_NAME, "OK", 300);
 	}
 
 }

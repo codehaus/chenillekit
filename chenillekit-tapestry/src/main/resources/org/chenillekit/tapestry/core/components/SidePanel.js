@@ -12,8 +12,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-var Ck.SidePanel = new Class.create();
-Ck.SidePanel.prototype =
+var SidePanel = new Class.create();
+SidePanel.prototype =
 {
     initialize: function(panelId, sizeElement)
     {

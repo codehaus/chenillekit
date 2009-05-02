@@ -63,10 +63,7 @@ public class Start
 			new Item("RestrictedPage", "Restricted", "tests Restricted page"),
 			new Item("UnRestrictedPage", "UnRestricted", "tests UnRestricted page"),
 			new Item("RestrictedTextField", "RestrictedTextField", "tests RestrictedTextField page"),
-			new Item("NotEnoughRights", "NotEnoughRights", "test Restricted page without rights to access"),
-			new Item("Invisible", "Invisible", "Invisible page"),
-			new Item("Logout", "Logout", "Logout user"),
-			new Item("Login", "Login", "Login access form")
+			new Item("NotEnoughRights", "NotEnoughRights", "test Restricted page without rights to access")
 	);
 
 	static
@@ -90,6 +87,4 @@ public class Start
 	{
 		_item = item;
 	}
-	
-	
 }
