@@ -15,7 +15,6 @@
 
 package org.chenillekit.access.pages;
 
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.chenillekit.access.annotations.Restricted;
 
@@ -25,19 +24,16 @@ import org.chenillekit.access.annotations.Restricted;
  */
 public class UnRestrictedPage
 {
-	@InjectPage
-	private Invisible invisible;
-	
 	@Restricted(groups = { "ADMINS" })
-	Object onActionFromTestRights()
+	void onActionFromTestRights()
 	{
-		return invisible;
+		throw new RuntimeException("This should never be reached!");
 	}
 
 	@Restricted(groups = { "ADMINS" })
 	@OnEvent(component = "testRightsOnEvent")
-	Object thisThrowRuntimeException()
+	void thisThrowRuntimeException()
 	{
-		return invisible;
+		throw new RuntimeException("This one too!");
 	}
 }

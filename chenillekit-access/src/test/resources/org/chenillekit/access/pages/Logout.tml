@@ -26,8 +26,6 @@
 
 <p>You have been logged out.</p>
 
-<p>User logged in: ${userLoggedIn}</p>
-
 <p><t:pagelink t:page="Start">Back to start</t:pagelink></p>
 
 </body>

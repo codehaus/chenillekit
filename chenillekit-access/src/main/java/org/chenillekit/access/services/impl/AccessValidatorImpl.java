@@ -33,14 +33,17 @@ public class AccessValidatorImpl implements AccessValidator
 	private final MetaDataLocator locator;
 	private final Logger logger;
 	private final ApplicationStateManager manager;
+	private final Class<? extends WebSessionUser> sessionUser;
+
 
 	public AccessValidatorImpl(ComponentSource componentSource, MetaDataLocator locator,
-							Logger logger, ApplicationStateManager manager)
+							Logger logger, ApplicationStateManager manager, Class<? extends WebSessionUser> sessionUser)
 	{
 		this.componentSource = componentSource;
 		this.locator = locator;
 		this.logger = logger;
 		this.manager = manager;
+		this.sessionUser = sessionUser;
 	}
 
 
@@ -153,7 +156,7 @@ public class AccessValidatorImpl implements AccessValidator
 
 		if (groups != null || role != null)
 		{
-			WebSessionUser webSessionUser = manager.getIfExists(WebSessionUser.class);
+			WebSessionUser webSessionUser = manager.getIfExists(sessionUser);
 
 			if (webSessionUser == null)
 			{

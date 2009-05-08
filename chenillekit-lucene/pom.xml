@@ -26,7 +26,7 @@
 	<parent>
 		<groupId>org.chenillekit</groupId>
 		<artifactId>chenillekit-project</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.0.2</version>
 	</parent>
 
 	<name>Chenillekit Lucene</name>
@@ -36,11 +36,18 @@
 	</description>
 
 	<scm>
-		<tag>HEAD</tag>
-		<url>http://chenillekit.googlecode.com/svn/trunk/chenillekit-lucene</url>
-		<connection>scm:svn:http://chenillekit.googlecode.com/svn/trunk/chenillekit-lucene</connection>
-		<developerConnection>scm:svn:https://chenillekit.googlecode.com/svn/trunk/chenillekit-lucene
+		<connection>
+			scm:svn:https://tapestry.formos.com/svn/chenillekit/branches/1.0/${artifactId}
+		</connection>
+		<developerConnection>
+			scm:svn:https://tapestry.formos.com/svn/chenillekit/branches/1.0/${artifactId}
 		</developerConnection>
+		<tag>
+			HEAD
+		</tag>
+		<url>
+			http://tapestry.formos.com/cgi-bin/viewvc.cgi/chenillekit/branches/1.0/${artifactId}
+		</url>
 	</scm>
 
 	<!--
@@ -71,7 +78,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chenillekit-test</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 

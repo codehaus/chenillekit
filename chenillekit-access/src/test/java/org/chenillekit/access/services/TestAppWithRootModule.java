@@ -14,6 +14,8 @@
 
 package org.chenillekit.access.services;
 
+import java.util.Map;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -24,6 +26,7 @@ import org.chenillekit.access.ChenilleKitAccessModule;
 import org.chenillekit.access.WebSessionUser;
 import org.chenillekit.access.services.impl.NoOpAppServerLoginService;
 import org.chenillekit.access.services.impl.UserAuthServiceImpl;
+import org.chenillekit.access.utils.DummyUser;
 
 /**
  *
@@ -49,6 +52,11 @@ public class TestAppWithRootModule
 	public static void contributeAuthenticationService(OrderedConfiguration<AuthenticationService> configuration)
 	{
 		configuration.add("TEST", new UserAuthServiceImpl());
+	}
+	
+	public static void contributeAccessValidator(MappedConfiguration<String, Class> configurations)
+	{
+		configurations.add(ChenilleKitAccessConstants.WEB_SESSION_USER_KEY, DummyUser.class);
 	}
 
 	/**
