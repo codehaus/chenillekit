@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ package org.chenillekit.tapestry.core.components;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.PrimaryKeyEncoder;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -25,10 +25,8 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.corelib.components.Delegate;
 import org.apache.tapestry5.corelib.components.Loop;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.util.StringToEnumCoercion;
+
 import org.chenillekit.tapestry.core.internal.PagedSource;
 import org.chenillekit.tapestry.core.internal.PagerPosition;
 
@@ -42,10 +40,10 @@ import org.chenillekit.tapestry.core.internal.PagerPosition;
 public class PagedLoop implements ClientElement
 {
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport _pageRenderSupport;
 
     @Parameter(value = "prop:componentResources.id", defaultPrefix = "literal")
-    private String clientId;
+    private String _clientId;
 
     /**
      * The element to render. If not null, then the loop will render the indicated element around its body (on each pass through the loop).
@@ -59,76 +57,77 @@ public class PagedLoop implements ClientElement
      */
     @SuppressWarnings("unused")
     @Parameter(required = true)
-    private Iterable<?> source;
+    private Iterable<?> _source;
 
-    private PagedSource<?> pagedSource;
+    private PagedSource<?> _pagedSource;
 
     /**
      * Defines where the pager (used to navigate within the "pages" of results)
      * should be displayed: "top", "bottom", "both" or "none".
      */
     @Parameter(value = "bottom", defaultPrefix = "literal")
-    private String pagerPosition;
+    private String _pagerPosition;
 
-    private PagerPosition internalPagerPosition;
+    private PagerPosition _internalPagerPosition;
 
     /**
      * The number of rows of data displayed on each page. If there are more rows than will fit, the Grid will divide
      * up the rows into "pages" and (normally) provide a pager to allow the user to navigate within the overall result set.
      */
     @Parameter("25")
-    private int rowsPerPage;
+    private int _rowsPerPage;
 
     @Persist
-    private int currentPage;
+    private int _currentPage;
 
     /**
      * The current value, set before the component renders its body.
      */
     @SuppressWarnings("unused")
     @Parameter
-    private Object value;
+    private Object _value;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off.
      * Defaults to false, enabling state saving logic within Forms.
      */
     @SuppressWarnings("unused")
-    @Parameter(name = "volatile")
-    private boolean isVolatile;
+    @Parameter
+    private boolean _volatile;
 
     /**
      * The index into the source items.
      */
     @SuppressWarnings("unused")
     @Parameter
-    private int index;
+    private int _index;
 
-	/**
-	 * Value encoder for the value, usually determined automatically from the type of the property bound to the value
-	 * parameter.
-	 */
-	@Parameter(required = true)
-	private ValueEncoder encoder;
+    /**
+     * Optional primary key converter; if provided and inside a form and not volatile, then each
+     * iterated value is converted and stored into the form.
+     */
+    @SuppressWarnings("unused")
+    @Parameter
+    private PrimaryKeyEncoder<?, ?> _encoder;
 
     @SuppressWarnings("unused")
     @Component(parameters = {"source=pagedSource",
             "element=prop:element", "value=inherit:value",
             "volatile=inherit:volatile", "encoder=inherit:encoder",
             "index=inherit:index"})
-    private Loop loop;
+    private Loop _loop;
 
     @Component(parameters = {"source=pagedSource", "rowsPerPage=rowsPerPage",
             "currentPage=currentPage"})
-    private Pager internalPager;
+    private Pager _internalPager;
 
     @SuppressWarnings("unused")
     @Component(parameters = "to=pagerTop")
-    private Delegate pagerTop;
+    private Delegate _pagerTop;
 
     @SuppressWarnings("unused")
     @Component(parameters = "to=pagerBottom")
-    private Delegate pagerBottom;
+    private Delegate _pagerBottom;
 
     /**
      * A Block to render instead of the table (and pager, etc.) when the source
@@ -137,15 +136,9 @@ public class PagedLoop implements ClientElement
      * components to allow the user to create new objects.
      */
     @Parameter(value = "block:empty")
-    private Block empty;
+    private Block _empty;
 
-	@Inject
-	private ComponentResources resources;
-
-	@Inject
-	private ComponentDefaultProvider defaultProvider;
-
-    private String assignedClientId;
+    private String _assignedClientId;
 
     public String getElement()
     {
@@ -154,69 +147,66 @@ public class PagedLoop implements ClientElement
 
     public Object getPagerTop()
     {
-        return internalPagerPosition.isMatchTop() ? internalPager : null;
+        return _internalPagerPosition.isMatchTop() ? _internalPager : null;
     }
 
     public Object getPagerBottom()
     {
-        return internalPagerPosition.isMatchBottom() ? internalPager : null;
+        return _internalPagerPosition.isMatchBottom() ? _internalPager : null;
     }
 
     public PagedSource<?> getPagedSource()
     {
-        return pagedSource;
+        return _pagedSource;
     }
 
     public int getRowsPerPage()
     {
-        return rowsPerPage;
+        return _rowsPerPage;
     }
 
     public void setRowsPerPage(int rowsPerPage)
     {
-        this.rowsPerPage = rowsPerPage;
+        _rowsPerPage = rowsPerPage;
     }
 
     public int getCurrentPage()
     {
-        return currentPage;
+        return _currentPage;
     }
 
     public void setCurrentPage(int currentPage)
     {
-        this.currentPage = currentPage;
+        _currentPage = currentPage;
     }
 
-	ValueEncoder defaultEncoder()
-	{
-		return defaultProvider.defaultValueEncoder("value", resources);
-	}
+
 
 	@SuppressWarnings("unchecked")
     Object setupRender()
     {
-		if (currentPage == 0)
-			currentPage = 1;
+		if (_currentPage == 0)
+			_currentPage = 1;
 
-		assignedClientId = javascriptSupport.allocateClientId(clientId);
-        internalPagerPosition = new StringToEnumCoercion<PagerPosition>(
-                PagerPosition.class).coerce(pagerPosition);
+		_assignedClientId = _pageRenderSupport.allocateClientId(_clientId);
+        _internalPagerPosition = new StringToEnumCoercion<PagerPosition>(
+                PagerPosition.class).coerce(_pagerPosition);
 
-        pagedSource = new PagedSource(source);
+        _pagedSource = new PagedSource(_source);
 
-        int availableRows = pagedSource.getTotalRowCount();
+        int availableRows = _pagedSource.getTotalRowCount();
 
         // If there's no rows, display the empty block placeholder.
         if (availableRows == 0)
         {
-            return empty;
+            return _empty;
         }
 
-        int startIndex = (currentPage - 1) * rowsPerPage;
-        int endIndex = Math.min(startIndex + rowsPerPage - 1,
+        int startIndex = (_currentPage - 1) * _rowsPerPage;
+        int endIndex = Math.min(startIndex + _rowsPerPage - 1,
                                 availableRows - 1);
 
-        pagedSource.prepare(startIndex, endIndex);
+        _pagedSource.prepare(startIndex, endIndex);
 
         return null;
     }
@@ -227,13 +217,13 @@ public class PagedLoop implements ClientElement
         // Skip rendering of component (template, body, etc.) when there's
         // nothing to display.
         // The empty placeholder will already have rendered.
-        return (pagedSource.getTotalRowCount() != 0);
+        return (_pagedSource.getTotalRowCount() != 0);
     }
 
     void onAction(int newPage)
     {
         // TODO: Validate newPage in range
-        currentPage = newPage;
+        _currentPage = newPage;
     }
 
     /**
@@ -243,6 +233,6 @@ public class PagedLoop implements ClientElement
      */
     public String getClientId()
     {
-        return assignedClientId;
+        return _assignedClientId;
     }
 }

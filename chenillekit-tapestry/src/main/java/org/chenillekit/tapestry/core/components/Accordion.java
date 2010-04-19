@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,13 @@
 
 package org.chenillekit.tapestry.core.components;
 
+import java.util.List;
+
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
@@ -25,9 +28,6 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
-
-import java.util.List;
 
 /**
  * accordion component.
@@ -44,25 +44,25 @@ public class Accordion implements ClientElement
      * times, a suffix will be appended to the to id to ensure uniqueness.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
-    private String clientId;
+    private String _clientId;
 
     /**
      * array of strings to show as panels subject.
      */
     @Parameter(required = true)
-    private List<?> subjects;
+    private List<?> _subjects;
 
     /**
      * array of strings to show as details text.
      */
     @Parameter(required = true)
-    private List<?> details;
+    private List<?> _details;
 
     /**
      * output raw markup to the client if true.
      */
     @Parameter(value = "false", required = false)
-    private boolean renderDetailsRaw;
+    private boolean _renderDetailsRaw;
 
     /**
      * duration of slide animation.
@@ -71,29 +71,29 @@ public class Accordion implements ClientElement
     private String duration;
 
     @Inject
-    private ComponentResources resources;
+    private ComponentResources _resources;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport _pageRenderSupport;
 
     @Inject
-    private Environment environment;
+    private Environment _environment;
 
-    private String assignedClientId;
+    private String _assignedClientId;
 
     void setupRender()
     {
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        _assignedClientId = _pageRenderSupport.allocateClientId(_clientId);
     }
 
     void beginRender(MarkupWriter writer)
     {
         writer.element("div", "id", getClientId());
-        resources.renderInformalParameters(writer);
+        _resources.renderInformalParameters(writer);
 
 
-        Object[] subjectsArray = subjects.toArray();
-        Object[] detailsArray = details.toArray();
+        Object[] subjectsArray = _subjects.toArray();
+        Object[] detailsArray = _details.toArray();
 
         for (int i = 0; i < subjectsArray.length; i++)
         {
@@ -109,7 +109,7 @@ public class Accordion implements ClientElement
             writer.element("div", "id", getClientId() + "_content_" + i, "class", "ck_accordionContent", "style", "display: none;");
 
             writer.element("div");
-            if (renderDetailsRaw)
+            if (_renderDetailsRaw)
                 writer.writeRaw(detail);
             else
                 writer.write(detail);
@@ -122,7 +122,7 @@ public class Accordion implements ClientElement
     void afterRender(MarkupWriter writer)
     {
         writer.end(); // main div
-        javascriptSupport.addScript("new Ck.Accordion('%s', {duration: %s});", getClientId(), duration);
+        _pageRenderSupport.addScript("new Ck.Accordion('%s', {duration: %s});", getClientId(), duration);
     }
 
     /**
@@ -132,6 +132,6 @@ public class Accordion implements ClientElement
      */
     public String getClientId()
     {
-        return assignedClientId;
+        return _assignedClientId;
     }
 }

@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * Helper component that will render a variable element type.
@@ -34,36 +34,36 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
 public class Element implements ClientElement
 {
     @Inject
-    private ComponentResources resources;
+    private ComponentResources _resources;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport _pageRenderSupport;
 
     /**
      * The id used to generate a page-unique client-side identifier for the component. If a component renders multiple
      * times, a suffix will be appended to the to id to ensure uniqueness.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
-    private String clientId;
+    private String _clientId;
 
     /**
      * The element to render. If not null, then the component will render the indicated element around
      * its body. The default is derived from the component template.
      */
     @Parameter(value = "prop:componentResources.elementName", defaultPrefix = "literal")
-    private String elementName;
+    private String _elementName;
 
-    private String assignedClientId;
+    private String _assignedClientId;
 
     void setupRender()
     {
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        _assignedClientId = _pageRenderSupport.allocateClientId(_clientId);
     }
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element(elementName, "id", getClientId());
-        resources.renderInformalParameters(writer);
+        writer.element(_elementName, "id", getClientId());
+        _resources.renderInformalParameters(writer);
     }
 
     void afterRender(MarkupWriter writer)
@@ -78,6 +78,6 @@ public class Element implements ClientElement
      */
     public String getClientId()
     {
-        return assignedClientId;
+        return _assignedClientId;
     }
 }

@@ -15,11 +15,14 @@
 package org.chenillekit.quartz;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
@@ -48,26 +51,26 @@ public class ChenilleKitQuartzModule
      *
      * @return scheduler factory
      */
-    public SchedulerFactory buildSchedulerFactory(Logger logger,
+    public static SchedulerFactory buildSchedulerFactory(Logger logger,
                                                          RegistryShutdownHub shutdownHub,
-                                                         List<URL> contributions)
+                                                         Map<String, Resource> contributions)
     {
         if (logger.isInfoEnabled())
             logger.info("initialize scheduler factory");
 
         try
         {
-        	
-        	if (contributions.isEmpty())
-        		throw new RuntimeException("Configuration to SchedulerFactory services needed");
-        	
-        	Properties prop = new Properties();
-        	
-        	for (URL contibutionURL: contributions)
-        	{
-        		prop.load(contibutionURL.openStream());
-			}
-        	
+            Resource resource = contributions.get(ChenilleKitQuartzConstants.CONFIG_RESOURCE_KEY);
+            if (resource == null)
+                resource = new ClasspathResource("/" + ChenilleKitQuartzConstants.CONFIG_RESOURCE_KEY);
+
+            if (!resource.exists())
+                throw new RuntimeException(String.format("Quartz properties resource '%s' doesnt exists!", resource));
+
+            InputStream in = resource.openStream();
+            Properties prop = new Properties();
+            prop.load(in);
+
             final SchedulerFactory factory = new StdSchedulerFactory(prop);
 
             shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
@@ -113,7 +116,7 @@ public class ChenilleKitQuartzModule
      * @return scheduler manager
      */
     @EagerLoad
-    public QuartzSchedulerManager buildQuartzSchedulerManager(Logger logger, final SchedulerFactory schedulerFactory,
+    public static QuartzSchedulerManager buildQuartzSchedulerManager(Logger logger, final SchedulerFactory schedulerFactory,
                                                                      final List<JobSchedulingBundle> jobSchedulingBundles)
     {
         return new QuartzSchedulerManagerImpl(logger, schedulerFactory, jobSchedulingBundles);

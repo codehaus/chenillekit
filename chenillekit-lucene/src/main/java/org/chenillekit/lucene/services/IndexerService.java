@@ -39,24 +39,11 @@ public interface IndexerService
     void delDocuments(String field, String queryString);
 
     /**
-     * Get the number of documents stored in the disk index. Be aware the
-     * presumably this methods delegates to a <code>synchronized</code>
-     * methods.
+     * get the amount of documents stored in the disk index.
      *
-     * @return the number of documents indexed
+     * @return amount of documents
      */
     int getDocCount();
-    
-    /**
-     * Get the number of documents stored in the index counting
-     * the deletions. Be aware the
-     * presumably this methods delegates to a <code>synchronized</code>
-     * methods.
-     * This methods should never return a checked exception.
-     * 
-     * @return the number of documents indexed
-     */
-    int getDocCountWithDeletions();
 
     /**
      * Force a commit of changes to the index

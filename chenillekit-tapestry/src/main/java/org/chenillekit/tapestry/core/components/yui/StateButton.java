@@ -18,6 +18,7 @@ package org.chenillekit.tapestry.core.components.yui;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -28,7 +29,6 @@ import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 import org.chenillekit.tapestry.core.base.AbstractYuiField;
 
@@ -66,8 +66,8 @@ public class StateButton extends AbstractYuiField
 	/**
 	 * RenderSupport to get unique client side id.
 	 */
-	@Environmental
-	private JavascriptSupport javascriptSupport;
+	@Inject
+	private RenderSupport renderSupport;
 
 	/**
 	 * Tapestry render phase method.
@@ -102,7 +102,7 @@ public class StateButton extends AbstractYuiField
 
 		configure(options);
 
-		javascriptSupport.addScript("new Ck.YuiStateButton('%s', %s);", getClientId(), options);
+		renderSupport.addScript("new Ck.YuiStateButton('%s', %s);", getClientId(), options);
 	}
 
 	/**

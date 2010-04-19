@@ -17,7 +17,7 @@ package org.chenillekit.tapestry.core;
 /**
  * some constants for t5components library.
  *
- * @version $Id$
+ * @version $Id: TapestryCommonsConstants.java 684 2008-05-26 23:32:28Z homburgs $
  */
 public class ChenilleKitCoreConstants
 {

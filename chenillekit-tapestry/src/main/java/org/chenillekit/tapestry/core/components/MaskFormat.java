@@ -3,16 +3,19 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
+ *
  */
 
 package org.chenillekit.tapestry.core.components;
+
+import javax.swing.text.MaskFormatter;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -20,9 +23,8 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.slf4j.Logger;
 
-import javax.swing.text.MaskFormatter;
+import org.slf4j.Logger;
 
 /**
  * <code>MaskFormat</code> is used to format strings. The behavior
@@ -31,62 +33,62 @@ import javax.swing.text.MaskFormatter;
  * <p/>
  * for more informations <a target="blank" href="http://java.sun.com/j2se/1.5.0/docs/api/javax/swing/text/MaskFormatter.html">click here</a>
  *
- * @version $Id$
+ * @version $Id: MaskFormat.java 682 2008-05-20 22:00:02Z homburgs $
  */
 @SupportsInformalParameters
 public class MaskFormat
 {
     @Inject
-    private Logger logger;
+    private Logger _logger;
     /**
      * the string value
      */
     @Parameter(required = true)
-    private String value;
+    private String _value;
 
     /**
      * the format mask
      */
     @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
-    private String mask;
+    private String _mask;
 
     /**
      * the placeholder character
      */
     @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
-    private String placeholder;
+    private String _placeholder;
 
     /**
      * the valid characters
      */
     @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
-    private String validCharacters;
+    private String _validCharacters;
 
     /**
      * ComponentResources. For blocks, messages, crete actionlink, trigger event
      */
     @Inject
-    private ComponentResources resources;
+    private ComponentResources _resources;
 
     private String getFormatedValue()
     {
         try
         {
-            MaskFormatter mf = new javax.swing.text.MaskFormatter(mask);
+            MaskFormatter mf = new javax.swing.text.MaskFormatter(_mask);
             mf.setValueContainsLiteralCharacters(false);
 
-            if (placeholder != null)
-                mf.setPlaceholderCharacter(placeholder.toCharArray()[0]);
+            if (_placeholder != null)
+                mf.setPlaceholderCharacter(_placeholder.toCharArray()[0]);
 
-            if (validCharacters != null)
-                mf.setValidCharacters(validCharacters);
+            if (_validCharacters != null)
+                mf.setValidCharacters(_validCharacters);
 
-            return mf.valueToString(value);
+            return mf.valueToString(_value);
         }
         catch (Exception e)
         {
-            logger.error(e.getLocalizedMessage());
-            return value;
+            _logger.error(e.getLocalizedMessage());
+            return _value;
         }
     }
 
@@ -94,11 +96,11 @@ public class MaskFormat
     {
         String formattedValue = getFormatedValue();
 
-        if (logger.isDebugEnabled())
-            logger.debug("parameter value: %s / transformed value: %s", value, formattedValue);
+        if (_logger.isDebugEnabled())
+            _logger.debug("parameter value: %s / transformed value: %s", _value, formattedValue);
 
         writer.element("span");
-        resources.renderInformalParameters(writer);
+        _resources.renderInformalParameters(writer);
         writer.write(formattedValue);
         writer.end();
     }

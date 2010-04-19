@@ -3,25 +3,25 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
+ *
  */
 
 package org.chenillekit.demo.components;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
-import org.chenillekit.tapestry.core.base.AbstractYahooComponent;
+
+import org.chenillekit.tapestry.core.base.AbstractYuiElement;
 
 /**
  * @author <a href="mailto:homburgs@googlemail.com">sven</a>
@@ -29,13 +29,13 @@ import org.chenillekit.tapestry.core.base.AbstractYahooComponent;
  */
 @IncludeStylesheet(value = {"${yahoo.yui}/assets/skins/sam/tabview.css"})
 @IncludeJavaScriptLibrary(value = {"${yahoo.yui}/tabview/tabview${yahoo.yui.mode}.js"})
-public class YuiTabSet extends AbstractYahooComponent
+public class YuiTabSet extends AbstractYuiElement
 {
 	/**
 	 * RenderSupport to get unique client side id.
 	 */
 	@Inject
-	private JavascriptSupport javascriptSupport;
+	private RenderSupport renderSupport;
 
 	/**
 	 * Tapestry render phase method.
@@ -43,7 +43,6 @@ public class YuiTabSet extends AbstractYahooComponent
 	 *
 	 * @param writer the markup writer
 	 */
-	@BeginRender
 	void beginRender(MarkupWriter writer)
 	{
 		writer.element("div", "id", getClientId(), "class", "yui-navset");
@@ -55,10 +54,9 @@ public class YuiTabSet extends AbstractYahooComponent
 	 *
 	 * @param writer the markup writer
 	 */
-	@AfterRender
 	void afterRender(MarkupWriter writer)
 	{
 		writer.end();
-		javascriptSupport.addScript("new YAHOO.widget.TabView('%s');", getClientId());
+		renderSupport.addScript("new YAHOO.widget.TabView('%s');", getClientId());
 	}
 }

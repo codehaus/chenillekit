@@ -20,6 +20,7 @@ import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectContainer;
@@ -28,10 +29,9 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
- * @version $Id$
+ * @version $Id: AbstractEventMixin.java 682 2008-05-20 22:00:02Z homburgs $
  */
 @IncludeJavaScriptLibrary(value = {"../Chenillekit.js", "../components/CkOnEvents.js"})
 @MixinAfter
@@ -72,7 +72,7 @@ abstract public class AbstractEventMixin implements EventMixin
 	private List<?> context;
 
 	@Environmental
-	private JavascriptSupport javascriptSupport;
+	private RenderSupport pageRenderSupport;
 
 	private Object[] contextArray;
 
@@ -100,7 +100,7 @@ abstract public class AbstractEventMixin implements EventMixin
 		String callBackString = resources.isBound("onCompleteCallback") ? onCompleteCallback : "";
 		boolean doStop = resources.isBound("stop") && stop;
 
-		javascriptSupport.addScript(jsString, getEventName(), id, doStop, link.toAbsoluteURI(), callBackString);
+		pageRenderSupport.addScript(jsString, getEventName(), id, doStop, link.toAbsoluteURI(), callBackString);
 	}
 
 	Object onInternalEvent()

@@ -14,10 +14,12 @@
 
 package org.chenillekit.reports;
 
-import java.net.URL;
-
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+
+import org.chenillekit.reports.services.ReportsService;
 
 /**
  * @version $Id$
@@ -25,10 +27,14 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 @SubModule(value = {ChenilleKitReportsModule.class})
 public class ChenilleKitReportsTestModule
 {
-    public static void contributeReportsService(OrderedConfiguration<URL> configuration)
+    /**
+     * wo liegen die Entities fuer das Masterdata5 Modul.
+     *
+     * @param configuration
+     */
+    public static void contributeReportsService(MappedConfiguration<String, Resource> configuration)
     {
-    	URL config = ChenilleKitReportsTestModule.class.getResource("/jasperreports.properties");
-        configuration.add("DefaultJaspterConfig", config);
+        configuration.add(ReportsService.CONFIG_RESOURCE_KEY, new ClasspathResource("jasperreports.properties"));
     }
 
 }

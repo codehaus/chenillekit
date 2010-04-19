@@ -18,18 +18,18 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * diplays a panel that can open/close its content.
  *
- * @version $Id$
+ * @version $Id: SlidingPanel.java 682 2008-05-20 22:00:02Z homburgs $
  */
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary(value = {"../Chenillekit.js", "SlidingPanel.js"})
@@ -67,13 +67,13 @@ public class SlidingPanel implements ClientElement
     private ComponentResources resources;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport renderSupport;
 
     private String assignedClientId;
 
     void setupRender()
     {
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        assignedClientId = renderSupport.allocateClientId(clientId);
     }
 
     /**
@@ -103,7 +103,7 @@ public class SlidingPanel implements ClientElement
         writer.end(); // Tag 'div.outer_panel'
         writer.end(); // Tag 'div.outer_panel'
         writer.end(); // main div
-        javascriptSupport.addScript("new Ck.SlidingPanel('%s', %s, %s);", getClientId(), closed, options);
+        renderSupport.addScript("new Ck.SlidingPanel('%s', %s, %s);", getClientId(), closed, options);
     }
 
     /**

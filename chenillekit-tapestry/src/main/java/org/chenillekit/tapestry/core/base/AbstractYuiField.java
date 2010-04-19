@@ -1,7 +1,6 @@
 package org.chenillekit.tapestry.core.base;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.MarkupWriterListener;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.dom.Element;
@@ -21,32 +20,19 @@ abstract public class AbstractYuiField extends AbstractField
 	 *
 	 * @param writer the markup writer
 	 */
-	void afterRenderTemplate(final MarkupWriter writer)
+	void afterRenderTemplate(MarkupWriter writer)
 	{
-		writer.addListener(new MarkupWriterListener()
+		Element bodyElement = writer.getDocument().find("html/body");
+		if (bodyElement == null)
+			throw new RuntimeException("there ist no 'html/body' element in this page");
+
+		String cssClassValue = bodyElement.getAttribute("class");
+		if (cssClassValue == null)
+			bodyElement.attribute("class", YUI_CSS_CLASS);
+		else
 		{
-			public void elementDidStart(Element element)
-			{
-				Element bodyElement = element.getDocument().find("html/body");
-				if (bodyElement == null)
-					return;
-
-				String cssClassValue = bodyElement.getAttribute("class");
-				if (cssClassValue == null)
-					bodyElement.attribute("class", YUI_CSS_CLASS);
-				else
-				{
-					if (!cssClassValue.contains(YUI_CSS_CLASS))
-						bodyElement.addClassName(YUI_CSS_CLASS);
-				}
-
-				if (bodyElement.getAttribute("class") != null)
-					writer.removeListener(this);
-			}
-
-			public void elementDidEnd(Element element)
-			{
-			}
-		});
+			if (!cssClassValue.contains(YUI_CSS_CLASS))
+				bodyElement.addClassName(YUI_CSS_CLASS);
+		}
 	}
 }

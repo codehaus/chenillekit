@@ -17,6 +17,7 @@ package org.chenillekit.tapestry.core.components;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -26,7 +27,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * <p>The editor component provides a rich text editor as a form control.
@@ -86,7 +86,7 @@ public class Editor extends AbstractTextField
 	private SymbolSource symbolSource;
 
 	@Environmental
-	private JavascriptSupport javascriptSupport;
+	private RenderSupport renderSupport;
 
 	@Inject
 	private Request request;
@@ -123,24 +123,24 @@ public class Editor extends AbstractTextField
 
 		String fckEditorBasePath = cpam.toClientURL(symbolSource.expandSymbols("${ck.components}")) + "/fckeditor/";
 
-		javascriptSupport.addScript("var %s = new FCKeditor('%s');", editorVar, getClientId());
-		javascriptSupport.addScript("%s.BasePath = '%s';", editorVar, fckEditorBasePath);
+		renderSupport.addScript("var %s = new FCKeditor('%s');", editorVar, getClientId());
+		renderSupport.addScript("%s.BasePath = '%s';", editorVar, fckEditorBasePath);
 
 		if (customConfiguration != null)
 		{
-			javascriptSupport.addScript("%s.Config['CustomConfigurationsPath'] = '%s';",
+			renderSupport.addScript("%s.Config['CustomConfigurationsPath'] = '%s';",
 									editorVar,
 									getCustomizedConfigurationURL(customConfiguration));
 		}
 
 		if (toolbarSet != null)
 		{
-			javascriptSupport.addScript("%s.ToolbarSet = '%s';", editorVar, toolbarSet);
+			renderSupport.addScript("%s.ToolbarSet = '%s';", editorVar, toolbarSet);
 		}
 
-		javascriptSupport.addScript("%s.Height = '%s';", editorVar, height);
-		javascriptSupport.addScript("%s.Width = '%s';", editorVar, width);
-		javascriptSupport.addScript("%s.ReplaceTextarea();", editorVar);
+		renderSupport.addScript("%s.Height = '%s';", editorVar, height);
+		renderSupport.addScript("%s.Width = '%s';", editorVar, width);
+		renderSupport.addScript("%s.ReplaceTextarea();", editorVar);
 	}
 
 	/**

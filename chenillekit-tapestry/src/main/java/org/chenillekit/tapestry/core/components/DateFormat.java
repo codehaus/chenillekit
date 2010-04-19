@@ -22,7 +22,6 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 
 /**
@@ -32,7 +31,7 @@ import org.apache.tapestry5.corelib.mixins.RenderInformals;
  * end the optional parameter <em>bodyPosition</em> shifts the
  * tag body to the left or right side, or discarded it.
  *
- * @version $Id$
+ * @version $Id: DateFormat.java 682 2008-05-20 22:00:02Z homburgs $
  */
 public class DateFormat
 {
@@ -55,55 +54,53 @@ public class DateFormat
      * the date value.
      */
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
-    private Date value;
+    private Date _value;
 
     /**
      * the format pattern.
      */
     @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL, value = "yyyy-MM-dd")
-    private String pattern;
+    private String _pattern;
 
     /**
      * the eelement body position.
      * may be : BODY_POS_NONE (default) / BODY_POS_LEFT / BODY_POS_RIGHT
      */
     @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL, value = "0")
-    private int bodyPosition;
+    private int _bodyPosition;
 
     @Mixin
-    private RenderInformals renderInformals;
+    private RenderInformals _renderInformals;
 
-    private SimpleDateFormat sdf;
+//    @Mixin
+//    private org.apache.tapestry.commons.mixins.Element _element;
 
-	/**
-	 * Tapestry render phase method.
-	 * Initialize temporary instance variables here.
-	 */
-	@SetupRender
-	void setupRender()
-	{
-		sdf = new SimpleDateFormat();
-	}
+    private SimpleDateFormat _sdf;
+
+    void pageLoaded()
+    {
+        _sdf = new SimpleDateFormat();
+    }
 
     boolean beginRender(MarkupWriter writer)
     {
-        if (value == null)
+        if (_value == null)
             return false;
 
-        sdf.applyPattern(pattern);
+        _sdf.applyPattern(_pattern);
 
-        if (bodyPosition == BODY_POS_NONE || bodyPosition == BODY_POS_RIGHT)
-            writer.write(sdf.format(value));
+        if (_bodyPosition == BODY_POS_NONE || _bodyPosition == BODY_POS_RIGHT)
+            writer.write(_sdf.format(_value));
 
-        return bodyPosition != BODY_POS_NONE;
+        return _bodyPosition != BODY_POS_NONE;
     }
 
     void afterRender(MarkupWriter writer)
     {
-        if (value == null)
+        if (_value == null)
             return;
 
-        if (bodyPosition == BODY_POS_LEFT)
-            writer.write(sdf.format(value));
+        if (_bodyPosition == BODY_POS_LEFT)
+            writer.write(_sdf.format(_value));
     }
 }

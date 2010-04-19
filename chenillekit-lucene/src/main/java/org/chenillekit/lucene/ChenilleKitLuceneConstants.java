@@ -14,8 +14,7 @@
 
 package org.chenillekit.lucene;
 
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.lucene.analysis.Analyzer;
 
 /**
  *
@@ -40,6 +39,12 @@ public class ChenilleKitLuceneConstants
     public static final String PROPERTIES_KEY_OIF = "search.overwrite.index.folder";
     
     /**
+     * The fully qualified class name to use as the {@link Analyzer}
+     * for index operations
+     */
+    public static final String PROPERTIES_KEY_ACN = "search.analyzer.class.name";
+    
+    /**
      * The max field length value for index stored properties.
      */
     public static final String PROPERTIES_KEY_MFL = "search.max.field.length";
@@ -48,11 +53,5 @@ public class ChenilleKitLuceneConstants
      * Enable or disable Lucene's output
      */
     public static final String PROPERTIES_KEY_ELO = "enable.lucene.log.output";
-    
-    /**
-     * The version which the Lucene {@link QueryParser} should be compatibile with.
-     * By default {@link FactoryDefaults} is <code>LUCENE_CURRENT</code>.
-     */
-    public static final String LUCENE_COMPATIBILITY_VERSION = "ck.lucene.compatibility.version";
 
 }

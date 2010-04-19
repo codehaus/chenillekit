@@ -19,9 +19,9 @@ import java.util.List;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
@@ -36,7 +36,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 import org.chenillekit.tapestry.core.internal.GenericValueEncoder;
 
@@ -109,8 +108,8 @@ public class RatingField<T> extends AbstractField
 	@Inject
 	private Environment environment;
 
-	@Environmental
-	private JavascriptSupport javascriptSupport;
+	@Inject
+	private RenderSupport renderSupport;
 
 	@Inject
 	private ComponentResources componentResources;
@@ -202,7 +201,7 @@ public class RatingField<T> extends AbstractField
 		//
 		configure(options);
 
-		javascriptSupport.addScript("new Ck.RatingField('%s', '%s', '%s', %s);",
+		renderSupport.addScript("new Ck.RatingField('%s', '%s', '%s', %s);",
 								getClientId(),
 								getSelectedImage().toClientURL(),
 								getUnselectedImage().toClientURL(),

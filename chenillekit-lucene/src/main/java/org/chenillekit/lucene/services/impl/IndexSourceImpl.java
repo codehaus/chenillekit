@@ -16,8 +16,6 @@ package org.chenillekit.lucene.services.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -27,7 +25,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.chenillekit.lucene.ChenilleKitLuceneConstants;
 import org.chenillekit.lucene.ChenilleKitLuceneRuntimeException;
@@ -56,21 +55,19 @@ public class IndexSourceImpl implements IndexSource, RegistryShutdownListener
 	 * @param logger
 	 * @param configResource
 	 */
-	public IndexSourceImpl(final Logger logger, final List<URL> configuration, Version version)
+	public IndexSourceImpl(final Logger logger, final Resource configResource)
 	{
+		Defense.notNull(configResource, "configResource");
         this.logger = logger;
 
-        if (configuration.isEmpty())
-            throw new ChenilleKitLuceneRuntimeException("At least one configuration is needed for IndexSource service");
+        if (!configResource.exists())
+            throw new ChenilleKitLuceneRuntimeException(String.format("config resource '%s' not found!", configResource.toURL().toString()));
         
         try
         {
         	Properties prop = new Properties();
         	
-        	for (URL url : configuration)
-        	{
-				prop.load(url.openStream());
-			}
+        	prop.load(configResource.toURL().openStream());
             
             File indexFolderFile = new File(prop.getProperty(ChenilleKitLuceneConstants.PROPERTIES_KEY_IF));
             
@@ -78,11 +75,14 @@ public class IndexSourceImpl implements IndexSource, RegistryShutdownListener
             
             boolean enableLuceneOutput = Boolean.valueOf(prop.getProperty(ChenilleKitLuceneConstants.PROPERTIES_KEY_ELO, "false"));
             
+            String analyzerClassName = prop.getProperty(ChenilleKitLuceneConstants.PROPERTIES_KEY_ACN, StandardAnalyzer.class.getName());
+            
             int maxFieldLength = Integer.valueOf(prop.getProperty(ChenilleKitLuceneConstants.PROPERTIES_KEY_MFL, "250000"));
  
-            this.directory = FSDirectory.open(indexFolderFile);
+            this.directory = FSDirectory.getDirectory(indexFolderFile);
             
-            this.analyzer = new StandardAnalyzer(version);
+            Class analyzerClass = getClass().getClassLoader().loadClass(analyzerClassName);
+            this.analyzer = (Analyzer) analyzerClass.newInstance();
 
             if (enableLuceneOutput)
                 IndexWriter.setDefaultInfoStream(System.out);
@@ -95,6 +95,18 @@ public class IndexSourceImpl implements IndexSource, RegistryShutdownListener
         catch (IOException ioe)
         {
             throw new ChenilleKitLuceneRuntimeException(ioe);
+        }
+        catch (IllegalAccessException iae)
+        {
+        	throw new ChenilleKitLuceneRuntimeException(iae);
+        }
+        catch (InstantiationException ie)
+        {
+        	throw new ChenilleKitLuceneRuntimeException(ie);
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+        	throw new ChenilleKitLuceneRuntimeException(cnfe);
         }
 	}
 	

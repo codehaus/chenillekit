@@ -14,19 +14,14 @@
 
 package org.chenillekit.lucene;
 
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.lucene.util.Version;
-import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+
 import org.chenillekit.lucene.services.IndexSource;
 import org.chenillekit.lucene.services.IndexerService;
 import org.chenillekit.lucene.services.SearcherService;
@@ -47,13 +42,11 @@ public class ChenilleKitLuceneModule
 	 * @param shutdownHub
 	 * @return
 	 */
-	public static IndexSource buildIndexSource(Logger logger, List<URL> configuration,
-						RegistryShutdownHub shutdownHub,
-						@Inject
-						@Symbol(ChenilleKitLuceneConstants.LUCENE_COMPATIBILITY_VERSION)
-						String version)
+	public static IndexSource buildIndexSource(Logger logger, Map<String, Resource> configurationMap,
+						RegistryShutdownHub shutdownHub)
 	{
-		IndexSourceImpl service = new IndexSourceImpl(logger, configuration, Version.valueOf(version));
+		Resource config = configurationMap.get(ChenilleKitLuceneConstants.CONFIG_KEY_PROPERTIES);
+		IndexSourceImpl service = new IndexSourceImpl(logger, config);
 
 		shutdownHub.addRegistryShutdownListener(service);
 
@@ -88,20 +81,12 @@ public class ChenilleKitLuceneModule
      * @return searcher engine
      */
     public static SearcherService buildSearcherService(Logger logger, IndexSource source,
-                                                       PerthreadManager threadManager,
-                                                       @Inject
-                                                       @Symbol(ChenilleKitLuceneConstants.LUCENE_COMPATIBILITY_VERSION)
-                                                       String version)
+                                                       PerthreadManager threadManager)
     {
-        SearcherServiceImpl service = new SearcherServiceImpl(logger, source, Version.valueOf(version));
+        SearcherServiceImpl service = new SearcherServiceImpl(logger, source);
 
         threadManager.addThreadCleanupListener(service);
 
         return service;
-    }
-    
-    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add(ChenilleKitLuceneConstants.LUCENE_COMPATIBILITY_VERSION, Version.LUCENE_CURRENT.toString());
     }
 }

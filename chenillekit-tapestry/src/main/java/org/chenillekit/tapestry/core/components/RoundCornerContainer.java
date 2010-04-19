@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * displays a colored container with rounded corners without pics or any mozilla-css goodies.
@@ -76,13 +76,13 @@ public class RoundCornerContainer implements ClientElement
 	private ComponentResources resources;
 
 	@Environmental
-	private JavascriptSupport javascriptSupport;
+	private RenderSupport pageRenderSupport;
 
-	private String assignedClientId;
+	private String _assignedClientId;
 
 	void setupRender()
 	{
-		assignedClientId = javascriptSupport.allocateClientId(clientId);
+		_assignedClientId = pageRenderSupport.allocateClientId(clientId);
 	}
 
 	void beginRender(MarkupWriter writer)
@@ -94,9 +94,9 @@ public class RoundCornerContainer implements ClientElement
 	void afterRender(MarkupWriter writer)
 	{
 		writer.end();
-		javascriptSupport.addScript("var %s = new Ck.Rounded('%s', '%s', '%s', '%s', '%s');",
+		pageRenderSupport.addScript("var %s = new Ck.Rounded('%s', '%s', '%s', '%s', '%s');",
 									getClientId(), getClientId(), bgcolor, fgcolor, size, renderPart);
-		javascriptSupport.addScript("%s.round();", getClientId());
+		pageRenderSupport.addScript("%s.round();", getClientId());
 	}
 
 	/**
@@ -106,6 +106,6 @@ public class RoundCornerContainer implements ClientElement
 	 */
 	public String getClientId()
 	{
-		return assignedClientId;
+		return _assignedClientId;
 	}
 }

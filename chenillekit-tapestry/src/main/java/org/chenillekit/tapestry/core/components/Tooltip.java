@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.chenillekit.tapestry.core.components;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Environmental;
@@ -25,12 +26,11 @@ import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * shows an tooltip if mouse slides over the declared content.
  *
- * @version $Id$
+ * @version $Id: Tooltip.java 682 2008-05-20 22:00:02Z homburgs $
  */
 @IncludeJavaScriptLibrary(value = {"../Chenillekit.js", "Tooltip.js"})
 @IncludeStylesheet(value = {"Tooltip.css"})
@@ -65,7 +65,7 @@ public class Tooltip
 	private ComponentResources resources;
 
 	@Environmental
-	private JavascriptSupport javascriptSupport;
+	private RenderSupport renderSupport;
 
 	@Inject
 	private Environment environment;
@@ -74,18 +74,18 @@ public class Tooltip
 
 	void setupRender()
 	{
-		assignedClientId = javascriptSupport.allocateClientId(clientId);
+		assignedClientId = renderSupport.allocateClientId(clientId);
 	}
 
 	@BeginRender
-	void beginRender(MarkupWriter writer)
+	void doBeginRender(MarkupWriter writer)
 	{
 		writer.element("span",
 					   "id", assignedClientId);
 	}
 
 	@AfterRender
-	void afterRender(MarkupWriter writer)
+	void doAfterRender(MarkupWriter writer)
 	{
 		writer.end();
 
@@ -99,7 +99,7 @@ public class Tooltip
 			jsCommand += ", effect: '" + effect + "'";
 
 		jsCommand += "});";
-		javascriptSupport.addScript(jsCommand, assignedClientId, replaceJSChar(value));
+		renderSupport.addScript(jsCommand, assignedClientId, replaceJSChar(value));
 	}
 
 	/**

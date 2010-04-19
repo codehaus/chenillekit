@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,18 @@
  */
 package org.chenillekit.access;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStateManager;
@@ -34,8 +36,6 @@ import org.apache.tapestry5.services.Cookies;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.chenillekit.access.annotations.ChenilleKitAccess;
-import org.chenillekit.access.dao.JDBCProtectionRuleDAO;
-import org.chenillekit.access.dao.ProtectionRuleDAO;
 import org.chenillekit.access.services.AccessValidator;
 import org.chenillekit.access.services.AuthenticationService;
 import org.chenillekit.access.services.AuthenticationServiceFilter;
@@ -43,157 +43,135 @@ import org.chenillekit.access.services.RedirectService;
 import org.chenillekit.access.services.impl.AccessValidatorImpl;
 import org.chenillekit.access.services.impl.ComponentRequestAccessFilter;
 import org.chenillekit.access.services.impl.CookieRedirectAccessFilter;
-import org.chenillekit.access.services.impl.ManagedRestrictedWorker;
 import org.chenillekit.access.services.impl.RedirectServiceImpl;
 import org.chenillekit.access.services.impl.RestrictedWorker;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 /**
  * Main Module class for ChenilleKitAccess, i mean T5 Module class.
- *
+ * 
  * @version $Id$
  */
 public class ChenilleKitAccessModule
 {
 	/**
 	 * Binding via fluent API by T5 {@link ServiceBinder}
-	 *
 	 * @param binder
-	 * @noinspection UnusedDeclaration
 	 */
 	public static void bind(ServiceBinder binder)
-	{
+	{	
 		binder.bind(ComponentRequestFilter.class, ComponentRequestAccessFilter.class).withMarker(ChenilleKitAccess.class);
 		binder.bind(RedirectService.class, RedirectServiceImpl.class);
 	}
-
-	public static ProtectionRuleDAO buildJDBCProtectionRuleDAO(Logger logger,
-															   Connection connection,
-															   @Inject @Symbol("tableName") String tableName)
-	{
-		return new JDBCProtectionRuleDAO(logger, connection, tableName);
-	}
-
+	
 	/**
 	 * Build a pipeline service around the {@link AuthenticationService} so we
 	 * may have more then one implementation decide how and when to authenticate.
-	 *
+	 * 
 	 * @param configuration {@link List} of filters to insert into the pipeline
-	 * @param builder	   {@link PipelineBuilder} from Tapestr5 IoC
-	 * @param logger		{@link Logger} configured by the Tapestry5 IoC
+	 * @param builder {@link PipelineBuilder} from Tapestr5 IoC
+	 * @param logger {@link Logger} configured by the Tapestry5 IoC
 	 * @return the facade service acting as a pipeline through the contributed
-	 *         implementations
-	 * @noinspection UnusedDeclaration
+	 * implementations 
 	 */
-	public static AuthenticationService build(@InjectService("PipelineBuilder") PipelineBuilder builder,
-											  final List<AuthenticationServiceFilter> configuration,
-											  Logger logger)
+	public static AuthenticationService build(
+			@InjectService("PipelineBuilder")
+			PipelineBuilder builder,
+			final List<AuthenticationServiceFilter> configuration,
+			Logger logger)
 	{
 		AuthenticationService terminator = new AuthenticationService()
-		{
+		{	
 			public WebSessionUser doAuthenticate(String userName, String password)
 			{
 				// Return a null so the service can fail if no other contributions are made
 				return null;
 			}
 		};
-
+		
 		return builder.build(logger, AuthenticationService.class, AuthenticationServiceFilter.class, configuration, terminator);
-
+		
 	}
-
-	/**
-	 * @param configuration
-	 * @noinspection UnusedDeclaration
-	 */
-	public static void contributeApplicationStateManager(
-			MappedConfiguration<Class, ApplicationStateContribution> configuration)
-	{
-		ApplicationStateCreator<WebSessionUser> creator = new ApplicationStateCreator<WebSessionUser>()
+    
+    /**
+     * 
+     * @param configuration
+     */
+    public static void contributeApplicationStateManager(
+    		MappedConfiguration<Class, ApplicationStateContribution> configuration)
+    {
+      ApplicationStateCreator<WebSessionUser> creator = new ApplicationStateCreator<WebSessionUser>()
+      {
+		public WebSessionUser create()
 		{
-			public WebSessionUser create()
-			{
-				// It sounds better to throw an IllegaAccess
-				// but Error and Exceptions are for other use case
-				// as declared in the respective javadocs
-				throw new IllegalStateException("WebSessionUser must be provided, not instantiated");
-			}
-		};
-
-		// FIXME Is "session" string available as a constants from Tapestry?
-		configuration.add(WebSessionUser.class, new ApplicationStateContribution("session", creator));
-	}
+			// It sounds better to throw an IllegaAccess
+			// but Error and Exceptions are for other use case
+			// as declared in the respective javadocs
+			throw new IllegalStateException("WebSessionUser must be provided, not instantiated");
+		}  
+      };
+      
+      // FIXME Is "session" string available as a constants from Tapestry?
+      configuration.add(WebSessionUser.class, new ApplicationStateContribution("session", creator));
+    }
 
 	/**
 	 * Contribute our {@link ComponentClassTransformWorker} to transformation pipeline to add our code to
 	 * loaded classes
-	 *
 	 * @param configuration component class transformer configuration
-	 * @noinspection UnusedDeclaration
 	 */
 	public static void contributeComponentClassTransformWorker(
-			OrderedConfiguration<ComponentClassTransformWorker> configuration)
+				OrderedConfiguration<ComponentClassTransformWorker> configuration)
 	{
 		configuration.addInstance("Restricted", RestrictedWorker.class, "after:Secure");
-		configuration.addInstance("ManagedRestricted", ManagedRestrictedWorker.class, "after:Secure");
 	}
 
 	/**
 	 * Contribute our virtual folder to {@link ComponentClassResolver} service
 	 *
 	 * @param configuration configuration for the service where we contribute to
-	 * @noinspection UnusedDeclaration
 	 */
 	public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
 	{
 		configuration.add(new LibraryMapping("ckaccess", "org.chenillekit.access"));
 	}
-
+	
 	/**
+	 *
 	 * @param componentSource component source
-	 * @param locator		 meta data locator
-	 * @param logger		  system logger
+	 * @param locator meta data locator
+	 * @param logger system logger
 	 * @return build access validator
-	 * @noinspection UnusedDeclaration
 	 */
 	@Marker(ChenilleKitAccess.class)
 	public static AccessValidator buildAccessValidator(ComponentSource componentSource,
-													   MetaDataLocator locator,
-													   Logger logger, ApplicationStateManager manager)
-	{
+													MetaDataLocator locator,
+													Logger logger, ApplicationStateManager manager)
+	{	
 		return new AccessValidatorImpl(componentSource, locator, logger, manager);
 	}
-
+	
 	/**
+	 * 
 	 * @param configuration
 	 * @param accessFilter
-	 * @noinspection UnusedDeclaration
 	 */
 	public static void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration,
-														 @ChenilleKitAccess ComponentRequestFilter accessFilter,
-														 Cookies cookies, RedirectService redirect, TypeCoercer coercer)
+							@ChenilleKitAccess ComponentRequestFilter accessFilter,
+							Cookies cookies, RedirectService redirect)
 	{
 		configuration.add("AccessControl", accessFilter, "before:*");
-
-		CookieRedirectAccessFilter cookieFilter = new CookieRedirectAccessFilter(cookies, redirect, coercer);
-
+		
+		CookieRedirectAccessFilter cookieFilter = new CookieRedirectAccessFilter(cookies, redirect);
+		
 		configuration.add("CookieRedirect", cookieFilter, "after:AccessControl");
 	}
 
 	/**
 	 * @param configuration
-	 * @noinspection UnusedDeclaration
 	 */
 	public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
 	{
-		configuration.add(ChenilleKitAccessConstants.ACCESS_DENIED_ACTION, ChenilleKitAccessConstants.JUMP_TO_LOGIN_PAGE);
-
 		Properties prop = new Properties();
 		try
 		{
@@ -211,4 +189,5 @@ public class ChenilleKitAccessModule
 			configuration.add(key.toString(), value.toString());
 		}
 	}
+
 }

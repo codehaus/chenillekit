@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,22 @@
  */
 
 package org.chenillekit.reports.services.impl;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import net.sf.jasperreports.engine.JRAbstractExporter;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -33,22 +49,9 @@ import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.export.oasis.JROdtExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.util.JRProperties;
-import org.apache.tapestry5.ioc.Resource;
 import org.chenillekit.reports.services.ReportsService;
 import org.chenillekit.reports.utils.ExportFormat;
 import org.slf4j.Logger;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * reporting tool that has the ability to deliver rich content to the screen or printer or into PDF, HTML, XLS, CSV and XML files
@@ -60,74 +63,72 @@ public class ReportsServiceImpl implements ReportsService
 {
 	private Logger logger;
 
-	public ReportsServiceImpl(Logger logger, List<URL> configurations)
+	public ReportsServiceImpl(Logger logger, Resource configuration)
 	{
-		if (configurations.isEmpty())
-			throw new RuntimeException("Configurations for JasperReports needed");
-
+		Defense.notNull(configuration, "configuration");
+		InputStream is = null;
 		this.logger = logger;
 
 		try
 		{
 			JRProperties.setProperty(JRProperties.COMPILER_TEMP_DIR, System.getProperty("java.io.tmpdir"));
 
-			Properties properties = new Properties();
-
-			for (URL url : configurations)
+			if (configuration != null)
 			{
-				properties.load(url.openStream());
-			}
+				Properties properties = new Properties();
 
-			Enumeration enumeration = properties.keys();
-			while (enumeration.hasMoreElements())
-			{
-				String key = (String) enumeration.nextElement();
-				JRProperties.setProperty(key.toUpperCase(), properties.getProperty(key));
+				is = configuration.toURL().openStream();
+				properties.load(is);
+				Enumeration enumeration = properties.keys();
+				while (enumeration.hasMoreElements())
+				{
+					String key = (String) enumeration.nextElement();
+					JRProperties.setProperty(key.toUpperCase(), properties.getProperty(key));
+				}
 			}
 		}
 		catch (IOException e)
 		{
 			throw new RuntimeException(e.getLocalizedMessage(), e);
 		}
+		finally
+		{
+			InternalUtils.close(is);
+		}
 	}
 
 	/**
-	 * set the classpath for the choosen jasperReport compiler.
-	 * all JARs located in the given directory will added to the actual classpath from the running application.
+	 * Klassenpfad-Verzeichnis fuer den JasperReport-Compiler setzen.
+	 * Alle JARs aus dem angegebenen Verzeichnis werden an den aktuellen Klassenpfad angehaengt.
 	 *
-	 * @param value name of the location, where your additional libraries resists.
+	 * @param value Name des Klassenpfad-Verzeichnis
 	 */
 	public void addCompilerClassPath(String value)
 	{
 		File jarDir = new File(value);
-		if (jarDir.exists() && jarDir.isDirectory())
+		if (!jarDir.exists() || !jarDir.isDirectory())
+			throw new RuntimeException(new FileNotFoundException("'" + jarDir.getPath() + "' does not exists or is no directory"));
+
+		File[] jarFiles = jarDir.listFiles(new FilenameFilter()
 		{
-			File[] jarFiles = jarDir.listFiles(new FilenameFilter()
+
+			/**
+			 * Tests if a specified file should be included in a file list.
+			 *
+			 * @param dir  the directory in which the file was found.
+			 * @param name the name of the file.
+			 *
+			 * @return <code>true</code> if and only if the name should be
+			 *         included in the file list; <code>false</code> otherwise.
+			 */
+			public boolean accept(File dir, String name)
 			{
+				return name.endsWith(".jar");
+			}
+		});
 
-				/**
-				 * Tests if a specified file should be included in a file list.
-				 *
-				 * @param dir  the directory in which the file was found.
-				 * @param name the name of the file.
-				 *
-				 * @return <code>true</code> if and only if the name should be
-				 *         included in the file list; <code>false</code> otherwise.
-				 */
-				public boolean accept(File dir, String name)
-				{
-					return name.endsWith(".jar");
-				}
-			});
-
-			for (File jarFile : jarFiles)
-				addCompilerClassPath(jarFile.getPath());
-		}
-		else
-		{
-			if (logger.isWarnEnabled())
-				logger.warn("'{}' does not exists or is not a directory", jarDir.getPath());
-		}
+		for (File jarFile : jarFiles)
+			addCompilerClassPath(jarFile.getPath());
 	}
 
 	/**
@@ -302,9 +303,6 @@ public class ReportsServiceImpl implements ReportsService
 		{
 			if (logger.isDebugEnabled())
 				logger.debug("using template '{}' for report.", template.toURL());
-
-			if (!template.exists())
-				throw new RuntimeException(String.format("resource '%s' doesnt exists!", template));
 
 			File sourceFile = new File(template.toURL().toURI());
 			File compiledFile = new File(JRProperties.getProperty(JRProperties.COMPILER_TEMP_DIR) + "/" +

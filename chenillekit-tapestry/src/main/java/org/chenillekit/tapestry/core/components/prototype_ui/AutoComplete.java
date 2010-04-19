@@ -23,6 +23,7 @@ import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
@@ -32,15 +33,13 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ResponseRenderer;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 /**
  * This AutoComplete component based on <a href="http://www.prototype-ui.com/">Prototype-UI's</a>
@@ -89,8 +88,8 @@ public class AutoComplete extends AbstractField
 	@Inject
 	private ComponentResources resources;
 
-	@Environmental
-	private JavascriptSupport javascriptSupport;
+	@Inject
+	private RenderSupport renderSupport;
 
 	@Inject
 	private PropertyAccess propertyAccess;
@@ -122,7 +121,7 @@ public class AutoComplete extends AbstractField
 
 		configure(config);
 
-		javascriptSupport.addScript("new Ck.AutoComplete('%s', %s);", getClientId(), config);
+		renderSupport.addScript("new Ck.AutoComplete('%s', %s);", getClientId(), config);
 	}
 
 	/**

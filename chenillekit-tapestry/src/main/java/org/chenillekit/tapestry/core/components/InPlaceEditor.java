@@ -23,6 +23,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -31,7 +32,6 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.util.TextStreamResponse;
 
 
@@ -84,7 +84,7 @@ public class InPlaceEditor implements ClientElement
     private Messages messages;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport renderSupport;
 
     @Inject
     private Request request;
@@ -95,7 +95,7 @@ public class InPlaceEditor implements ClientElement
 
     void setupRender()
     {
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        assignedClientId = renderSupport.allocateClientId(clientId);
         contextArray = context == null ? new Object[0] : context.toArray();
     }
 
@@ -114,7 +114,7 @@ public class InPlaceEditor implements ClientElement
         writer.end();
 
         Link link = resources.createEventLink(EventConstants.ACTION, contextArray);
-        javascriptSupport.addScript("new Ajax.InPlaceEditor('%s', '%s', {cancelControl: 'button', cancelText: '%s', " +
+        renderSupport.addScript("new Ajax.InPlaceEditor('%s', '%s', {cancelControl: 'button', cancelText: '%s', " +
                 "clickToEditText: '%s', savingText: '%s', okText: '%s', htmlResponse: true, size: %s, stripLoadedTextTags: true});",
                                 getClientId(), link.toAbsoluteURI(),
                                 messages.get("cancelbutton"),

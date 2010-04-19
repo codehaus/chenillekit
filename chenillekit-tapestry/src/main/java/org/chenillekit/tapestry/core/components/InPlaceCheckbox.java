@@ -23,7 +23,7 @@ import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
@@ -31,7 +31,6 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.mixins.DiscardBody;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * a "just in place" checkbox component that dont must emmbedded in a form.
@@ -94,8 +93,8 @@ public class InPlaceCheckbox implements ClientElement
     /**
      * RenderSupport to get unique client side id.
      */
-    @Environmental
-    private JavascriptSupport javascriptSupport;
+    @Inject
+    private RenderSupport renderSupport;
 
     private String assignedClientId;
 
@@ -103,7 +102,7 @@ public class InPlaceCheckbox implements ClientElement
 
     void setupRender()
     {
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        assignedClientId = renderSupport.allocateClientId(clientId);
         contextArray = context == null ? new Object[0] : context.toArray();
     }
 
@@ -140,7 +139,7 @@ public class InPlaceCheckbox implements ClientElement
 
         ajaxString += ");";
 
-        javascriptSupport.addScript(ajaxString, getClientId(), link.toAbsoluteURI());
+        renderSupport.addScript(ajaxString, getClientId(), link.toAbsoluteURI());
     }
 
     JSONObject onAction(EventContext context)

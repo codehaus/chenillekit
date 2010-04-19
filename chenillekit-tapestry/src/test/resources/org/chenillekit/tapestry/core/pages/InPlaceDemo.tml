@@ -24,7 +24,7 @@
 
 in place checkbox <span t:id="inPlaceCheckbox"/>
 <br/>
-in place edit <div t:id="inPlaceEditor" type="text"/>
+<!--in place edit <input t:id="inPlaceEditor" type="text"/>-->
 <br/>
 
 <p>

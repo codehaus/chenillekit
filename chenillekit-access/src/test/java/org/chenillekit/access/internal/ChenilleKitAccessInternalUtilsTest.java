@@ -44,7 +44,7 @@ public class ChenilleKitAccessInternalUtilsTest extends TestBase
 	{
 		String res = ChenillekitAccessInternalUtils.getContextAsString(new EmptyEventContext());
 		
-		assertEquals(res, "ckEventContext");
+		assertEquals(res, "");
 	}
 	
 	@Test
@@ -64,7 +64,7 @@ public class ChenilleKitAccessInternalUtilsTest extends TestBase
 		
 		verify();
 		
-		assertEquals(result, "ckEventContextUNO####DUE####TRE####");
+		assertEquals(result, "UNO####DUE####TRE####");
 	}
 	
 	@Test

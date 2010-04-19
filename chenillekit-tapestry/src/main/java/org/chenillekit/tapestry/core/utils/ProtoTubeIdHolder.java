@@ -16,20 +16,12 @@
 package org.chenillekit.tapestry.core.utils;
 
 /**
- * holder class for YouTube video informations.
- *
+ * @author <a href="mailto:homburgs@googlemail.com">sven</a>
  * @version $Id$
  */
 public class ProtoTubeIdHolder
 {
-	/**
-	 * the YouTube video id
-	 */
 	private String id;
-
-	/**
-	 * title that should displayed for this video thumb 
-	 */
 	private String title;
 
 	public ProtoTubeIdHolder(String id, String title)

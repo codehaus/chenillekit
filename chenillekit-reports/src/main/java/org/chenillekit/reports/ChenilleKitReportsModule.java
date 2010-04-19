@@ -14,8 +14,6 @@
 
 package org.chenillekit.reports;
 
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.Resource;
@@ -40,8 +38,8 @@ public class ChenilleKitReportsModule
      * @return the jasperreports service
      */
     @Marker(ChenilleKitReports.class)
-    public static ReportsService buildReportsService(Logger logger, List<URL> configuration)
+    public static ReportsService buildReportsService(Logger logger, Map<String, Resource> configuration)
     {
-        return new ReportsServiceImpl(logger, configuration);
+        return new ReportsServiceImpl(logger, configuration.get(ReportsService.CONFIG_RESOURCE_KEY));
     }
 }

@@ -3,12 +3,10 @@ package org.chenillekit.tapestry.core.components.google;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
-
 import org.chenillekit.tapestry.core.components.Hidden;
 
 /**
@@ -30,8 +28,8 @@ public class GMarker implements ClientElement
 	/**
 	 * RenderSupport to get unique client side id.
 	 */
-	@Environmental
-	private JavascriptSupport javascriptSupport;
+	@Inject
+	private RenderSupport renderSupport;
 
 	@Inject
 	private ComponentResources resources;
@@ -73,12 +71,12 @@ public class GMarker implements ClientElement
 
 	void setupRender()
 	{
-		assignedClientId = javascriptSupport.allocateClientId(clientId);
+		assignedClientId = renderSupport.allocateClientId(clientId);
 	}
 
 	void afterRender()
 	{
-		javascriptSupport.addScript("%s.setMarker(%s, %s, '%s','%s','%s',%s);", gPlotterId, lat, lng,
+		renderSupport.addScript("%s.setMarker(%s, %s, '%s','%s','%s',%s);", gPlotterId, lat, lng,
 				resources.isBound("infoWindowHtml") ? infoWindowHtml : "", hiddenLat.getClientId(),
 				hiddenLng.getClientId(), draggable);
 	}

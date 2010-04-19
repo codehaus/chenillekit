@@ -21,8 +21,8 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.InjectContainer;
@@ -31,12 +31,11 @@ import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.apache.tapestry5.util.TextStreamResponse;
 
-import org.chenillekit.tapestry.core.base.AbstractYahooComponent;
+import org.chenillekit.tapestry.core.base.AbstractYuiElement;
 
 /**
  * @version $Id$
@@ -50,7 +49,7 @@ import org.chenillekit.tapestry.core.base.AbstractYahooComponent;
 		"${yahoo.yui}/editor/editor${yahoo.yui.mode}.js",
 		"yui-image-uploader26.js",
 		"Editor.js"})
-public class Editor extends AbstractYahooComponent
+public class Editor extends AbstractYuiElement
 {
 	private static String INTERNAL_EVENT = "internalUploaded";
 	private static String UPLOAD_EVENT = "uploaded";
@@ -64,8 +63,8 @@ public class Editor extends AbstractYahooComponent
 	/**
 	 * RenderSupport to get unique client side id.
 	 */
-	@Environmental
-	private JavascriptSupport javascriptSupport;
+	@Inject
+	private RenderSupport renderSupport;
 
 	/**
 	 * For blocks, messages, crete actionlink, trigger event.
@@ -110,7 +109,7 @@ public class Editor extends AbstractYahooComponent
 		if (allowUploads)
 			uploadEventLink = resources.createEventLink(INTERNAL_EVENT);
 
-		javascriptSupport.addScript("new Ck.YuiEditor('%s', '%s', %s);", clientElement.getClientId(), uploadEventLink, options);
+		renderSupport.addScript("new Ck.YuiEditor('%s', '%s', %s);", clientElement.getClientId(), uploadEventLink, options);
 	}
 
 	StreamResponse onInternalUploaded()

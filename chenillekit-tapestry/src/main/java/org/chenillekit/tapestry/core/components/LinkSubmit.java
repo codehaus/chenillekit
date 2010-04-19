@@ -17,13 +17,13 @@ package org.chenillekit.tapestry.core.components;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * LinkSubmit allows arbitrary page (DOM) elements to submit a form.
@@ -42,7 +42,7 @@ public class LinkSubmit implements ClientElement
     private ComponentResources resources;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport renderSupport;
 
     /**
      * The client-side id.
@@ -55,7 +55,7 @@ public class LinkSubmit implements ClientElement
      */
     void setupRender()
     {
-        clientId = javascriptSupport.allocateClientId(resources.getId());
+        clientId = renderSupport.allocateClientId(resources.getId());
     }
 
     /**
@@ -66,7 +66,7 @@ public class LinkSubmit implements ClientElement
      */
     void beginRender(final MarkupWriter writer)
     {
-        javascriptSupport.addScript("new Ck.ClickSubmit('%s');", getClientId());
+        renderSupport.addScript("new Ck.ClickSubmit('%s');", getClientId());
         writer.element("a", "id", getClientId(), "href", "#");
     }
 

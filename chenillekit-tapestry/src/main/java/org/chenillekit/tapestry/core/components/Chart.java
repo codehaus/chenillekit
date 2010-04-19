@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,12 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 import org.chenillekit.tapestry.core.utils.XYDataItem;
 
@@ -45,27 +44,27 @@ public class Chart implements ClientElement
      * times, a suffix will be appended to the to id to ensure uniqueness.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
-    private String clientId;
+    private String _clientId;
 
     /**
      * the list of data item arrays.
      */
     @Parameter(name = "dataItems", required = false, defaultPrefix = BindingConstants.PROP)
-    private List<List<XYDataItem>> dataItemsList;
+    private List<List<XYDataItem>> _dataItemsList;
 
     /**
      * PageRenderSupport to get unique client side id.
      */
-    @Environmental
-    private JavascriptSupport javascriptSupport;
+    @Inject
+    private RenderSupport _renderSupport;
 
     /**
      * For blocks, messages, crete actionlink, trigger event.
      */
     @Inject
-    private ComponentResources resources;
+    private ComponentResources _resources;
 
-    private String assignedClientId;
+    private String _assignedClientId;
 
     /**
      * Tapestry render phase method.
@@ -73,7 +72,7 @@ public class Chart implements ClientElement
      */
     void setupRender()
     {
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        _assignedClientId = _renderSupport.allocateClientId(_clientId);
     }
 
     /**
@@ -83,7 +82,7 @@ public class Chart implements ClientElement
     void beginRender(MarkupWriter writer)
     {
         writer.element("div", "id", getClientId());
-        resources.renderInformalParameters(writer);
+        _resources.renderInformalParameters(writer);
         writer.end();
     }
 
@@ -103,24 +102,24 @@ public class Chart implements ClientElement
         //
         // do it only if user give us some values
         //
-        if (dataItemsList != null && dataItemsList.size() > 0)
+        if (_dataItemsList != null && _dataItemsList.size() > 0)
         {
             dataArrayString = "[";
 
-            for (int i = 0; i < dataItemsList.size(); i++)
+            for (int i = 0; i < _dataItemsList.size(); i++)
             {
-                List<XYDataItem> dataItems = dataItemsList.get(i);
+                List<XYDataItem> dataItems = _dataItemsList.get(i);
 
                 String dataVarName = String.format("d%d", i);
-                javascriptSupport.addScript("var %s = %s;", dataVarName, buildDataValuesString(dataItems));
+                _renderSupport.addScript("var %s = %s;", dataVarName, buildDataValuesString(dataItems));
                 dataArrayString += dataVarName;
-                if (i < dataItemsList.size() - 1)
+                if (i < _dataItemsList.size() - 1)
                     dataArrayString += ",";
             }
             dataArrayString += "]";
         }
 
-        String javaScriptCall = "new Flotr.draw($('%s'), ";
+        String javaScriptCall = "var chart_%s = new Flotr.draw($('%s'), ";
 
         //
         // if the user dont give us some chart values we add an empty value array.
@@ -137,7 +136,7 @@ public class Chart implements ClientElement
 
         javaScriptCall += ");";
 
-        javascriptSupport.addScript(javaScriptCall, getClientId(), dataArrayString);
+        _renderSupport.addScript(javaScriptCall, getClientId(), getClientId(), dataArrayString);
     }
 
     /**
@@ -181,6 +180,6 @@ public class Chart implements ClientElement
      */
     public String getClientId()
     {
-        return assignedClientId;
+        return _assignedClientId;
     }
 }

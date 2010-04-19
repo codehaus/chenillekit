@@ -16,22 +16,19 @@ package org.chenillekit.access.services.impl;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentRequestFilter;
 import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.apache.tapestry5.services.Cookies;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.chenillekit.access.ChenilleKitAccessConstants;
-import org.chenillekit.access.internal.ChenillekitAccessInternalUtils;
 import org.chenillekit.access.services.RedirectService;
 
 /**
 * Filter to catch request coming in after a successfull login which should
 * be redirected to the actual request made before the login request.
 * 
-* @version $Id$
+* @version $Id: AuthenticationService.java 380 2008-12-30 10:21:52Z mlusetti $
 */
 public class CookieRedirectAccessFilter implements ComponentRequestFilter
 {
@@ -39,78 +36,16 @@ public class CookieRedirectAccessFilter implements ComponentRequestFilter
 	
 	private final RedirectService redirect;
 	
-	private final TypeCoercer coercer;
-	
 	/**
-	 * Default main construction with injection fields.
 	 * 
-	 * @param cookies {@link Cookies} services from Tapestry5
-	 * @param response {@link Response} shadow servide from Tapestry5
-	 * @param redirect {@link RedirectService} to apply redirections
+	 * @param cookies
+	 * @param response
+	 * @param redirect
 	 */
-	public CookieRedirectAccessFilter(Cookies cookies,
-				RedirectService redirect, TypeCoercer coercer)
+	public CookieRedirectAccessFilter(Cookies cookies, RedirectService redirect)
 	{
 		this.cookies = cookies;
 		this.redirect = redirect;
-		this.coercer = coercer;
-	}
-	
-	/**
-	 * Remove all the cookies used
-	 */
-	private void removeAllCookies()
-	{
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_ACTIVATION_CONTEXT);
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_ACTIVE_PAGE_NAME);
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_CONTAINING_PAGE_NAME);
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_EVENT_CONTEXT);
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_EVENT_TYPE);
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_NESTED_COMPONENT_ID);
-		cookies.removeCookieValue(ChenilleKitAccessConstants.REMEMBERED_PARAMS_TYPE);
-	}
-	
-	/**
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	private boolean handleRememberedParameters() throws IOException
-	{
-		String rememberedType = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_PARAMS_TYPE);
-		
-		if (rememberedType == null)
-			return false;
-		
-		String activePageName = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_ACTIVE_PAGE_NAME);
-		String containingPageName = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_CONTAINING_PAGE_NAME);
-		String eventType = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_EVENT_TYPE);
-		String nestedComponentId = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_NESTED_COMPONENT_ID);
-		String activationContextString = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_ACTIVATION_CONTEXT);
-		String eventContextString = cookies.readCookieValue(ChenilleKitAccessConstants.REMEMBERED_EVENT_CONTEXT);
-		
-		EventContext activationContext = ChenillekitAccessInternalUtils.getContextFromString(coercer, activationContextString);
-		EventContext eventContext = ChenillekitAccessInternalUtils.getContextFromString(coercer, eventContextString);
-		
-		removeAllCookies();
-		
-		if (rememberedType.equals(ChenilleKitAccessConstants.REMEMBERED_PARAMS_TYPE_PAGERENDER_VALUE))
-		{
-			redirect.redirectTo(activePageName, activationContext);
-		}
-		else if (rememberedType.equals(ChenilleKitAccessConstants.REMEMBERED_PARAMS_TYPE_ACTIONEVENT_VALUE))
-		{
-			// XXX This one is missing stuff and is not completely right!
-			redirect.redirectTo(activePageName, eventContext);
-		}
-		else
-		{
-			throw new IllegalStateException("Remembered request type unknown: " + rememberedType);
-		}
-		
-		
-		
-		return true;
 	}
 
 	/* (non-Javadoc)
@@ -132,16 +67,47 @@ public class CookieRedirectAccessFilter implements ComponentRequestFilter
 			ComponentRequestHandler handler) throws IOException
 	{
 		String successfulLogin = cookies.readCookieValue(ChenilleKitAccessConstants.LOGIN_SUCCESSFUL_COOKIE_NAME);
+		String ckAccessId = cookies.readCookieValue(ChenilleKitAccessConstants.ACCESS_ID_COOKIE_NAME);
+		
+		PageRenderRequestParameters actualParameters = null;
 		
 		if (successfulLogin != null && successfulLogin.equals(ChenilleKitAccessConstants.LOGIN_SUCCESSFUL_COOKIE_NAME_OK))
-		{
+		{	
 			// We have just done a successfull login
-			cookies.removeCookieValue(ChenilleKitAccessConstants.LOGIN_SUCCESSFUL_COOKIE_NAME);
-			
-			if ( !handleRememberedParameters() )
+			if (ckAccessId == null)
 			{
 				// We don't have the hook for stored parameters so proceed...
 				handler.handlePageRender(parameters);
+			}
+			else
+			{
+				// We have the hook so check for stored page render parameter
+				actualParameters = redirect.removePageRenderParamter(ckAccessId);
+				
+				if (actualParameters != null)
+				{
+					cookies.removeCookieValue(ChenilleKitAccessConstants.LOGIN_SUCCESSFUL_COOKIE_NAME);
+					cookies.removeCookieValue(ChenilleKitAccessConstants.ACCESS_ID_COOKIE_NAME);
+					
+					redirect.redirectTo(actualParameters.getLogicalPageName(), actualParameters.getActivationContext());
+				}
+				else
+				{
+					// We don't have page render parameter check for component event one
+					ComponentEventRequestParameters eventParameters = redirect.removeComponentEventParameter(ckAccessId);
+					if (eventParameters != null)
+					{				
+						cookies.removeCookieValue(ChenilleKitAccessConstants.LOGIN_SUCCESSFUL_COOKIE_NAME);
+						cookies.removeCookieValue(ChenilleKitAccessConstants.ACCESS_ID_COOKIE_NAME);
+						
+						redirect.redirectTo(eventParameters.getActivePageName(), eventParameters.getEventContext());
+					}
+					else
+					{
+						// We don't have anything and something wired has happened...
+						handler.handlePageRender(parameters);
+					}
+				}
 			}
 		}
 		else

@@ -14,19 +14,12 @@
 
 package org.chenillekit.access;
 
-import java.io.Serializable;
-
 /**
  *
- * @version $Id$
+ * @version $Id: WebSessionUser.java 447 2009-03-28 08:54:25Z mlusetti $
  */
-public interface WebSessionUser<T> extends Serializable
-{
-	/**
-	 * @return the generic type of the implementation
-	 */
-	public Class<T> getType();
-	
+public interface WebSessionUser
+{	
 	/**
 	 * Get the human readble <em>name</em> of the user currently logged in.
 	 * Usually this is used in a (sort of) layout component to show that a
@@ -58,5 +51,5 @@ public interface WebSessionUser<T> extends Serializable
 	 * 
 	 * @return the id (identifier) of the user currently logged in
 	 */
-	public T getUserId();
+	public int getUserId();
 }

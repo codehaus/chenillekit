@@ -14,13 +14,10 @@
 
 package org.chenillekit.tapestry.core.pages;
 
-import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Property;
 
 import org.chenillekit.tapestry.core.components.InPlaceCheckbox;
-import org.chenillekit.tapestry.core.components.InPlaceEditor;
 
 /**
  * @version $Id$
@@ -33,14 +30,9 @@ public class InPlaceDemo
     @Component(parameters = {"value=inPlaceCheckboxValue", "onCompleteCallback=onCheckboxClicked"})
     private InPlaceCheckbox inPlaceCheckbox;
 
-    @Property
-    private String inPlaceEditorValue;
-
-    @Component(parameters = {"value=inPlaceEditorValue"})
-    private InPlaceEditor inPlaceEditor;
-
-	@OnEvent(component = "inPlaceEditor", value = "action")
-	void actionFromEditor(EventContext context)
-	{
-	}
+//    @Property
+//    private String inPlaceEditorValue;
+//
+//    @Component(parameters = {"value=inPlaceEditorValue"})
+//    private InPlaceEditor inPlaceEditor;
 }

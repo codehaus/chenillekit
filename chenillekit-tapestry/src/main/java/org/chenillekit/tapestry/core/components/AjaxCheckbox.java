@@ -19,14 +19,13 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Checkbox;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * A "ajaxed" <a href="http://tapestry.apache.org/t5components/tapestry-core/component-parameters.html#orgapachetapestrycorelibcomponentscheckbox">Checkbox</a> component.
@@ -67,8 +66,8 @@ public class AjaxCheckbox extends Checkbox
 	/**
 	 * RenderSupport to get unique client side id.
 	 */
-	@Environmental
-	private JavascriptSupport javascriptSupport;
+	@Inject
+	private RenderSupport renderSupport;
 
 
 	/**
@@ -92,7 +91,7 @@ public class AjaxCheckbox extends Checkbox
 
 		Link link = resources.createEventLink(event, context);
 
-		javascriptSupport.addScript(ajaxString, getClientId(), link.toAbsoluteURI());
+		renderSupport.addScript(ajaxString, getClientId(), link.toAbsoluteURI());
 	}
 
 	@OnEvent(value = AjaxCheckbox.INTERNAL_EVENT_NAME)

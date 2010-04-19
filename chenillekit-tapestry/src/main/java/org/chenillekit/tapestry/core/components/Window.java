@@ -15,24 +15,24 @@
 package org.chenillekit.tapestry.core.components;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.AfterRenderBody;
 import org.apache.tapestry5.annotations.BeforeRenderBody;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 import org.chenillekit.tapestry.core.base.AbstractWindow;
 
 /**
  * creates a window based on jvascript <a href="http://prototype-window.xilinus.com/">window</a> library.
  *
- * @version $Id$
+ * @version $Id: Window.java 682 2008-05-20 22:00:02Z homburgs $
  */
 public class Window extends AbstractWindow
 {
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport renderSupport;
 
     private boolean hasBody = false;
 
@@ -86,12 +86,12 @@ public class Window extends AbstractWindow
         //
         configure(options);
 
-        javascriptSupport.addScript("%s = new Window(%s);", getClientId(), options);
+        renderSupport.addScript("%s = new Window(%s);", getClientId(), options);
 
         if (hasBody)
-            javascriptSupport.addScript("%s.setContent('%sContent');", getClientId(), getClientId());
+            renderSupport.addScript("%s.setContent('%sContent');", getClientId(), getClientId());
 
         if (isShow())
-            javascriptSupport.addScript("%s.show%s(%s);", getClientId(), isCenter() ? "Center" : "", isModal());
+            renderSupport.addScript("%s.show%s(%s);", getClientId(), isCenter() ? "Center" : "", isModal());
     }
 }

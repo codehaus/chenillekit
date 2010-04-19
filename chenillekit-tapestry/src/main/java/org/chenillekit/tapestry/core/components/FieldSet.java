@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@ package org.chenillekit.tapestry.core.components;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * closeable fieldset.
@@ -39,7 +39,7 @@ public class FieldSet
      * let the Fieldset initialy displayed as closed/open,
      */
     @Parameter(value = "false", required = false)
-    private boolean closed;
+    private boolean _closed;
 
     /**
      * The id used to generate a page-unique client-side identifier for the component. If a component renders multiple
@@ -47,15 +47,15 @@ public class FieldSet
      * {@link #getClientId() clientId property}.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
-    private String clientId;
+    private String _clientId;
 
-    private String assignedClientId;
+    private String _assignedClientId;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport _pageRenderSupport;
 
     @Inject
-    private ComponentResources resources;
+    private ComponentResources _resources;
 
     void setupRender()
     {
@@ -64,24 +64,24 @@ public class FieldSet
         // Often, these controlName and _clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        _assignedClientId = _pageRenderSupport.allocateClientId(_clientId);
     }
 
     void beginRender(MarkupWriter writer)
     {
         writer.element("fieldset", "id", getClientId(), "class", "ck_fieldset");
-        resources.renderInformalParameters(writer);
+        _resources.renderInformalParameters(writer);
     }
 
     void afterRender(MarkupWriter writer)
     {
         writer.end();
 
-        javascriptSupport.addScript("var %s = new Ck.FieldSet('%s', %s);", getClientId(), getClientId(), closed);
+        _pageRenderSupport.addScript("var %s = new Ck.FieldSet('%s', %s);", getClientId(), getClientId(), _closed);
     }
 
     public String getClientId()
     {
-        return assignedClientId;
+        return _assignedClientId;
     }
 }

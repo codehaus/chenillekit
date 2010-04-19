@@ -18,6 +18,7 @@ package org.chenillekit.tapestry.core.mixins.yui;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.InjectContainer;
@@ -25,9 +26,8 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
-import org.chenillekit.tapestry.core.base.AbstractYahooComponent;
+import org.chenillekit.tapestry.core.base.AbstractYuiElement;
 
 /**
  * @author <a href="mailto:homburgs@googlemail.com">sven</a>
@@ -36,7 +36,7 @@ import org.chenillekit.tapestry.core.base.AbstractYahooComponent;
 @IncludeStylesheet(value = {"${yahoo.yui}/button/assets/skins/sam/button.css"})
 @IncludeJavaScriptLibrary(value = {"${yahoo.yui}/button/button${yahoo.yui.mode}.js"})
 //@MixinAfter
-public class Button extends AbstractYahooComponent
+public class Button extends AbstractYuiElement
 {
 	@Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
 	private String label;
@@ -48,7 +48,7 @@ public class Button extends AbstractYahooComponent
 	 * RenderSupport to get unique client side id.
 	 */
 	@Inject
-	private JavascriptSupport javascriptSupport;
+	private RenderSupport renderSupport;
 
 	@InjectContainer
 	private ClientElement clientElement;
@@ -103,7 +103,7 @@ public class Button extends AbstractYahooComponent
 
 		configure(options);
 
-		javascriptSupport.addScript("new YAHOO.widget.Button('%s', %s);", getClientId(), options);
+		renderSupport.addScript("new YAHOO.widget.Button('%s', %s);", getClientId(), options);
 	}
 
 	/**

@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
 package org.chenillekit.mail.services.impl;
 
 import java.io.File;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
+import java.net.URL;
+import java.util.Map;
 
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-
+import org.apache.tapestry5.ioc.Resource;
+import org.chenillekit.core.services.ConfigurationService;
 import org.chenillekit.mail.ChenilleKitMailConstants;
 import org.chenillekit.mail.MailMessageHeaders;
 import org.chenillekit.mail.services.MailService;
@@ -50,51 +50,28 @@ public class MailServiceImpl implements MailService<Email>
 	private final int smtpSslPort;
 
 	public MailServiceImpl(Logger logger,
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_HOST)
-						   String smtpServer,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_PORT)
-						   int smtpPort,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_USER)
-						   String smtpUser,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_PASSWORD)
-						   String smtpPassword,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_DEBUG)
-						   boolean smtpDebug,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_SSL)
-						   boolean smtpSSL,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_TLS)
-						   boolean smtpTLS,
-
-						   @Inject
-						   @Symbol(ChenilleKitMailConstants.SMTP_SSLPORT)
-						   int smtpSslPort)
+								 ConfigurationService configurationService,
+								 Map<String, Resource> configuration)
 	{
 		this.logger = logger;
 
-		this.smtpServer = smtpServer;
-		this.smtpPort = smtpPort;
-		this.smtpUser = smtpUser;
-		this.smtpPassword = smtpPassword;
-		this.smtpDebug = smtpDebug;
-		this.smtpSSL = smtpSSL;
-		this.smtpTLS = smtpTLS;
-		this.smtpSslPort = smtpSslPort;
+		Resource servicePorpertiesResource = configuration.get(ChenilleKitMailConstants.PROPERTIES_KEY);
+		if (servicePorpertiesResource == null || !servicePorpertiesResource.exists())
+			throw new RuntimeException(String.format("'%s' does not exists!", servicePorpertiesResource));
+
+		Configuration serviceConfiguration = configurationService.getConfiguration(servicePorpertiesResource);
+
+		this.smtpServer = serviceConfiguration.getString(ChenilleKitMailConstants.SMTP_HOST, "localhost");
+		this.smtpPort = serviceConfiguration.getInt(ChenilleKitMailConstants.SMTP_PORT, 25);
+		this.smtpUser = serviceConfiguration.getString(ChenilleKitMailConstants.SMTP_USER);
+		this.smtpPassword = serviceConfiguration.getString(ChenilleKitMailConstants.SMTP_PASSWORD);
+		this.smtpDebug = serviceConfiguration.getBoolean(ChenilleKitMailConstants.SMTP_DEBUG, false);
+		this.smtpSSL = serviceConfiguration.getBoolean(ChenilleKitMailConstants.SMTP_SSL, false);
+		this.smtpTLS = serviceConfiguration.getBoolean(ChenilleKitMailConstants.SMTP_TLS, false);
+		this.smtpSslPort = serviceConfiguration.getInt(ChenilleKitMailConstants.SMTP_SSLPORT, 465);
 	}
-
-
+	
+	
 	private void setEmailStandardData(Email email)
 	{
 		email.setHostName(smtpServer);
@@ -108,7 +85,7 @@ public class MailServiceImpl implements MailService<Email>
 		email.setSslSmtpPort(String.valueOf(smtpSslPort));
 		email.setTLS(smtpTLS);
 	}
-
+	
 	private EmailAttachment getAttachment(File file)
 	{
 		// Create the attachment
@@ -117,27 +94,27 @@ public class MailServiceImpl implements MailService<Email>
 		attachment.setDisposition(EmailAttachment.ATTACHMENT);
 		attachment.setDescription(file.getName());
 		attachment.setName(file.getName());
-
+		
 		return attachment;
 	}
-
+	
 	private void setMailMessageHeaders(Email email, MailMessageHeaders headers)
-			throws EmailException
+					throws EmailException
 	{
 		email.setFrom(headers.getFrom());
-
+		
 		email.setSubject(headers.getSubject());
-
+		
 		for (String to : headers.getTo())
 		{
 			email.addTo(to);
 		}
-
+		
 		for (String cc : headers.getCc())
 		{
 			email.addCc(cc);
 		}
-
+		
 		for (String bcc : headers.getBcc())
 		{
 			email.addBcc(bcc);
@@ -163,9 +140,9 @@ public class MailServiceImpl implements MailService<Email>
 //			email.setSSL(smtpSSL);
 //			email.setSslSmtpPort(String.valueOf(smtpSslPort));
 //			email.setTLS(smtpTLS);
-
+			
 			setEmailStandardData(email);
-
+			
 			email.send();
 		}
 		catch (EmailException e)
@@ -176,152 +153,60 @@ public class MailServiceImpl implements MailService<Email>
 
 		return sended;
 	}
-
-	/**
-	 * send a HTML message.
-	 *
-	 * @param headers  the mail headers
-	 * @param htmlBody the mail body (HTML based)
-	 *
-	 * @return true if mail successfull send
-	 */
-	public boolean sendHtmlMail(MailMessageHeaders headers, String htmlBody)
-	{
-		return sendHtmlMail(headers, htmlBody, (DataSource[]) null);
-	}
-
-	/**
-	 * send a HTML message.
-	 *
-	 * @param headers	 the mail headers
-	 * @param htmlBody	the mail body (HTML based)
-	 * @param attachments array of files to attach at this mail
-	 *
-	 * @return true if mail successfull send
-	 */
+	
+	
 	public boolean sendHtmlMail(MailMessageHeaders headers, String htmlBody, File... attachments)
 	{
-		DataSource[] dataSources = null;
-
-		if (attachments != null)
-		{
-			dataSources = new DataSource[attachments.length];
-			for (int x = 0; x < attachments.length; x++)
-				dataSources[x] = new FileDataSource(attachments[x]);
-		}
-
-		return sendHtmlMail(headers, htmlBody, dataSources);
-	}
-
-	/**
-	 * send a HTML message.
-	 *
-	 * @param headers	 the mail headers
-	 * @param htmlBody	the mail body (HTML based)
-	 * @param dataSources array of data sources to attach at this mail
-	 *
-	 * @return true if mail successfull send
-	 */
-	public boolean sendHtmlMail(MailMessageHeaders headers, String htmlBody, DataSource... dataSources)
-	{
-		try
-		{
+		try {
 			HtmlEmail email = new HtmlEmail();
-
+			
 			setEmailStandardData(email);
-
+			
 			setMailMessageHeaders(email, headers);
-
-			if (dataSources != null)
+			
+			for (File file : attachments)
 			{
-				for (DataSource dataSource : dataSources)
-					email.attach(dataSource, dataSource.getName(), dataSource.getName());
+				email.attach(getAttachment(file));	
 			}
-
+			
 			email.setHtmlMsg(htmlBody);
-
+			
 			String msgId = email.send();
-
+			
 			return true;
-		}
-		catch (EmailException e)
+			
+		} catch (EmailException e)
 		{
 			// FIXME Handle gracefully
 			throw new RuntimeException(e);
 		}
 	}
 
-	/**
-	 * send a plain text message.
-	 *
-	 * @param headers the mail headers
-	 * @param body	the mail body (text based)
-	 *
-	 * @return true if mail successfull send
-	 */
-	public boolean sendPlainTextMail(MailMessageHeaders headers, String body)
-	{
-		return sendPlainTextMail(headers, body, (DataSource[]) null);
-	}
-
-	/**
-	 * send a plain text message.
-	 *
-	 * @param headers	 the mail headers
-	 * @param body		the mail body (text based)
-	 * @param attachments array of files to attach at this mail
-	 *
-	 * @return true if mail successfull send
-	 */
 	public boolean sendPlainTextMail(MailMessageHeaders headers, String body, File... attachments)
 	{
-		DataSource[] dataSources = null;
-
-		if (attachments != null)
-		{
-			dataSources = new DataSource[attachments.length];
-			for (int x = 0; x < attachments.length; x++)
-				dataSources[x] = new FileDataSource(attachments[x]);
-		}
-
-		return sendPlainTextMail(headers, body, dataSources);
-	}
-
-
-	/**
-	 * send a plain text message.
-	 *
-	 * @param headers	 the mail headers
-	 * @param body		the mail body (text based)
-	 * @param dataSources array of data sources to attach at this mail
-	 *
-	 * @return true if mail successfull send
-	 */
-	public boolean sendPlainTextMail(MailMessageHeaders headers, String body, DataSource... dataSources)
-	{
-		try
-		{
+		try {
 			Email email = new SimpleEmail();
-
-			if (dataSources != null && dataSources.length > 0)
+			
+			if (attachments != null && attachments.length > 0)
 			{
 				MultiPartEmail multiPart = new MultiPartEmail();
-
-				for (DataSource dataSource : dataSources)
-					multiPart.attach(dataSource, dataSource.getName(), dataSource.getName());
-
+				
+				for (File file : attachments)
+				{
+					multiPart.attach(getAttachment(file));
+				}
 				email = multiPart;
 			}
-
+			
 			setEmailStandardData(email);
-
+			
 			setMailMessageHeaders(email, headers);
-
+			
 			email.setMsg(body);
-
+			
 			String msgId = email.send();
-
-			return true;
+				
+			return true;	
 		}
 		catch (EmailException e)
 		{
@@ -329,5 +214,8 @@ public class MailServiceImpl implements MailService<Email>
 			throw new RuntimeException(e);
 		}
 	}
-
+	
+	
+	
+	
 }

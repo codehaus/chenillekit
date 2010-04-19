@@ -18,23 +18,20 @@
 
 package org.chenillekit.access.services.impl;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.services.TransformMethodSignature;
 import org.chenillekit.access.ChenilleKitAccessConstants;
+import org.chenillekit.access.ChenilleKitAccessException;
 import org.chenillekit.access.annotations.Restricted;
 import org.chenillekit.access.internal.ChenillekitAccessInternalUtils;
 import org.slf4j.Logger;
 
 /**
  *
- * @version $Id$
+ * @version $Id: AccessControlWorker.java 88 2008-06-16 16:43:40Z homburgs $
  */
 public class RestrictedWorker implements ComponentClassTransformWorker
 {
@@ -61,33 +58,6 @@ public class RestrictedWorker implements ComponentClassTransformWorker
 
 		// processComponentsRestrictions(transformation, model);
 	}
-	
-	protected List<TransformMethod> getMatchedMethods(ClassTransformation transformation, final Class<? extends Annotation> annotation)
-	{
-		return transformation.matchMethods(new Predicate<TransformMethod>()
-		{
-			public boolean accept(TransformMethod method)
-			{
-				return (hasCorrectPrefix(method) || hasAnnotation(method)) && !method.isOverride();
-			}
-
-			private boolean hasCorrectPrefix(TransformMethod method)
-			{
-				String methodName = method.getName();
-				
-				boolean res = methodName.startsWith("on") &&
-								method.getAnnotation(annotation) != null;
-				return res;
-			}
-
-			private boolean hasAnnotation(TransformMethod method)
-			{
-				boolean res = method.getAnnotation(OnEvent.class) != null &&
-								method.getAnnotation(annotation) != null; 
-				return res;
-			}
-		});
-	}
 
 	/**
 	 * Read and process restriction on page classes annotated with {@link Restricted} annotation
@@ -97,7 +67,7 @@ public class RestrictedWorker implements ComponentClassTransformWorker
 	 * @param model          Mutable version of {@link org.apache.tapestry5.model.ComponentModel} used during
 	 *                       the transformation phase.
 	 */
-	protected void processPageRestriction(ClassTransformation transformation, MutableComponentModel model)
+	private void processPageRestriction(ClassTransformation transformation, MutableComponentModel model)
 	{
 		Restricted pageRestricted = transformation.getAnnotation(Restricted.class);
 		if (pageRestricted != null)
@@ -127,39 +97,45 @@ public class RestrictedWorker implements ComponentClassTransformWorker
 	 * @param model          Mutable version of {@link org.apache.tapestry5.model.ComponentModel} used during
 	 *                       the transformation phase.
 	 */
-	protected void processEventHandlerRestrictions(ClassTransformation transformation, MutableComponentModel model)
+	private void processEventHandlerRestrictions(ClassTransformation transformation, MutableComponentModel model)
 	{
-		List<TransformMethod> matchedMethods = getMatchedMethods(transformation, Restricted.class);
 		
-		for (TransformMethod method : matchedMethods)
+		for (TransformMethodSignature method : transformation.findMethodsWithAnnotation(Restricted.class))
 		{
-			String methodName = method.getName();
+			String methodName = method.getMethodName();
+			Restricted restricted = transformation.getMethodAnnotation(method, Restricted.class);
+			OnEvent event = transformation.getMethodAnnotation(method, OnEvent.class);
 			
-			Restricted restricted = method.getAnnotation(Restricted.class);
-			
-			String componentId = extractComponentId(method, method.getAnnotation(OnEvent.class));
-			String eventType = extractEventType(method, method.getAnnotation(OnEvent.class));
-
-			String groupMeta = ChenillekitAccessInternalUtils.buildMetaForHandlerMethod(componentId,
-					eventType,
-					ChenilleKitAccessConstants.RESTRICTED_EVENT_HANDLER_GROUPS_SUFFIX);
-
-			String roleMeta = ChenillekitAccessInternalUtils.buildMetaForHandlerMethod(componentId,
-					eventType,
-					ChenilleKitAccessConstants.RESTRICTED_EVENT_HANDLER_ROLE_SUFFIX);
-			
-			String groupsString = ChenillekitAccessInternalUtils.getStringArrayAsString(restricted.groups());
-			
-			if (groupsString.trim().length() > 0)
-				model.setMeta(groupMeta, groupsString);
-			
-			model.setMeta(roleMeta, Integer.toString(restricted.role()));
-			
-			if (logger.isDebugEnabled())
+			if (methodName.startsWith("on") || event != null)
 			{
-				logger.debug( methodName + " has restrictions:");
-				logger.debug("    " + roleMeta + " => " + Integer.toString(restricted.role()));
-				logger.debug("    " + groupMeta + " => " + groupsString);
+				String componentId = extractComponentId(method, event);
+				String eventType = extractEventType(method, event);
+
+				String groupMeta = ChenillekitAccessInternalUtils.buildMetaForHandlerMethod(componentId,
+						eventType,
+						ChenilleKitAccessConstants.RESTRICTED_EVENT_HANDLER_GROUPS_SUFFIX);
+
+				String roleMeta = ChenillekitAccessInternalUtils.buildMetaForHandlerMethod(componentId,
+						eventType,
+						ChenilleKitAccessConstants.RESTRICTED_EVENT_HANDLER_ROLE_SUFFIX);
+				
+				String groupsString = ChenillekitAccessInternalUtils.getStringArrayAsString(restricted.groups());
+				
+				if (groupsString.trim().length() > 0)
+					model.setMeta(groupMeta, groupsString);
+				
+				model.setMeta(roleMeta, Integer.toString(restricted.role()));
+				
+				if (logger.isDebugEnabled())
+				{
+					logger.debug( methodName + " has restrictions:");
+					logger.debug("    " + roleMeta + " => " + Integer.toString(restricted.role()));
+					logger.debug("    " + groupMeta + " => " + groupsString);
+				}
+			}
+			else
+			{
+				throw new ChenilleKitAccessException("Cannot put Restricted annotation on a non event handler method");
 			}
 		}
 	}
@@ -183,19 +159,19 @@ public class RestrictedWorker implements ComponentClassTransformWorker
 	 * is present it takes precedence over the method signature.
 	 * This method is taken from Tapestry5 OnEventWorker.
 	 * 
-	 * @param method the {@link TransformMethod} signature to look for
+	 * @param method the {@link TransformMethodSignature} signature to look for
 	 * @param annotation the, eventually present, {@link OnEvent} annotation. 
 	 * @return the componentId of the associated component, it could also be
 	 * the empty string if the event handler method is not associated to a
 	 * particular component.
 	 */
-	protected String extractComponentId(TransformMethod method, OnEvent annotation)
+	private String extractComponentId(TransformMethodSignature method, OnEvent annotation)
     {
         if (annotation != null) return annotation.component();
 
         // Method name started with "on". Extract the component id, if present.
 
-        String name = method.getName();
+        String name = method.getMethodName();
 
         int fromx = name.indexOf("From");
 
@@ -210,18 +186,18 @@ public class RestrictedWorker implements ComponentClassTransformWorker
 	 * is present it takes precendence over the method signature.
 	 * This method is taken from Tapestry5 OnEventWorker.
 	 * 
-	 * @param method the {@link TransformMethod} signature to look for
+	 * @param method the {@link TransformMethodSignature} signature to look for
 	 * @param annotation the, eventually present, {@link OnEvent} annotation.
 	 * @return the event type for which the method act as an 'handler method', it
 	 * could not be an empty string and defaults to <code>Action</code>.
 	 */
-	protected String extractEventType(TransformMethod method, OnEvent annotation)
+	private String extractEventType(TransformMethodSignature method, OnEvent annotation)
     {
         if (annotation != null) return annotation.value();
 
         // Method name started with "on". Extract the event type.
 
-        String name = method.getName();
+        String name = method.getMethodName();
 
         int fromx = name.indexOf("From");
 

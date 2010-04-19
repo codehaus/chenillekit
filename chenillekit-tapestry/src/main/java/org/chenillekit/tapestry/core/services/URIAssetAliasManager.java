@@ -15,7 +15,7 @@
 package org.chenillekit.tapestry.core.services;
 
 /**
- * @version $Id$
+ * @version $Id: URIAssetAliasManager.java 669 2008-05-09 00:05:47Z homburgs $
  */
 public interface URIAssetAliasManager
 {

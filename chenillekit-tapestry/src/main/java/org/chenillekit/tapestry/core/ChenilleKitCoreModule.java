@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,14 +61,14 @@ public class ChenilleKitCoreModule
 		configuration.add("ck.components", "org/chenillekit/tapestry/core/components");
 		configuration.add("ck.fckeditor", "classpath:${ck.components}/fckeditor");
 
-		configuration.add("yahoo.yui.path", "org/chenillekit/tapestry/core/yui_2_8_0");
+		configuration.add("yahoo.yui.path", "org/chenillekit/tapestry/core/yui_2_7_0");
 		configuration.add("yahoo.yui", "classpath:${yahoo.yui.path}");
 
 		configuration.add("yahoo.yui.mode", "-min");
 	}
 
 	public void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
-													 @Symbol("ck.components") String scriptPath)
+													 @Symbol("ck.components")String scriptPath)
 	{
 		configuration.add("fckeditor/", scriptPath + "/fckeditor/");
 		configuration.add("window/", scriptPath + "/window/");
@@ -107,7 +107,9 @@ public class ChenilleKitCoreModule
 	public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
 										   ObjectLocator locator)
 	{
-		configuration.add("Uri", locator.autobuild(URIDispatcher.class), "before:Asset");
+		configuration.add("Uri",
+						  locator.autobuild(URIDispatcher.class), "before:Asset");
 
 	}
+
 }

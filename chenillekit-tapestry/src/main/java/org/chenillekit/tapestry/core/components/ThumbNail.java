@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2008-2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,20 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+
 import org.chenillekit.tapestry.core.services.ThumbNailService;
 
 /**
  * converts a image asset into a <a href="http://en.wikipedia.org/wiki/Thumbnail">thumbnail</a>.
  *
- * @version $Id$
+ * @version $Id: ThumbNail.java 682 2008-05-20 22:00:02Z homburgs $
  */
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary(value = {"../Chenillekit.js", "ThumbNail.js"})
@@ -43,47 +44,47 @@ public class ThumbNail implements ClientElement
      * {@link #getClientId() clientId property}.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
-    private String clientId;
+    private String _clientId;
 
     /**
      * the asset path or asset itself, that converted to thumbnail.
      */
     @Parameter(name = "asset", required = true, defaultPrefix = BindingConstants.LITERAL)
-    private Object assetObject;
+    private Object _assetObject;
 
     /**
      * the height (pixel) of the thumbnail.
      */
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
-    private int thumbHeight;
+    private int _thumbHeight;
 
     /**
      * output quality of the thumbnail.
      */
     @Parameter(value = "80", required = false, defaultPrefix = BindingConstants.PROP)
-    private float quality;
+    private float _quality;
 
     /**
      * if true, clicking mouse over the thumbnail show the original image.
      */
     @Parameter(value = "false", required = false, defaultPrefix = BindingConstants.PROP)
-    private boolean onClickAction;
+    private boolean _onClickAction;
 
-    private String assignedClientId;
+    private String _assignedClientId;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private RenderSupport _pageRenderSupport;
 
     @Inject
-    private ComponentResources resources;
+    private ComponentResources _resources;
 
     @Inject
-    private AssetSource assetSource;
+    private AssetSource _assetSource;
 
     @Inject
-    private ThumbNailService thumbNailService;
+    private ThumbNailService _thumbNailService;
 
-    private Asset asset;
+    private Asset _asset;
 
     /**
      * Tapestry render phase method.
@@ -96,12 +97,12 @@ public class ThumbNail implements ClientElement
         // Often, these controlName and _clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        _assignedClientId = _pageRenderSupport.allocateClientId(_clientId);
 
-        if (assetObject instanceof String)
-            asset = assetSource.getAsset(resources.getBaseResource(), (String) assetObject, null);
-        else if (assetObject instanceof Asset)
-            asset = (Asset) assetObject;
+        if (_assetObject instanceof String)
+            _asset = _assetSource.getAsset(_resources.getBaseResource(), (String) _assetObject, null);
+        else if (_assetObject instanceof Asset)
+            _asset = (Asset) _assetObject;
         else
             throw new RuntimeException("parameter 'asset' neither a string nor an asset object");
     }
@@ -115,7 +116,7 @@ public class ThumbNail implements ClientElement
     void beginRender(MarkupWriter writer)
     {
         writer.element("img", "id", getClientId(), "src", generateThumbNail().toClientURL());
-        resources.renderInformalParameters(writer);
+        _resources.renderInformalParameters(writer);
     }
 
     /**
@@ -127,13 +128,13 @@ public class ThumbNail implements ClientElement
     {
         writer.end();
 
-        if (onClickAction)
-            javascriptSupport.addScript("new Ck.ThumbNail('%s', '%s');", getClientId(), asset.toClientURL());
+        if (_onClickAction)
+            _pageRenderSupport.addScript("new Ck.ThumbNail('%s', '%s');", getClientId(), _asset.toClientURL());
     }
 
     private Asset generateThumbNail()
     {
-        return thumbNailService.convertToThumbnail(asset, thumbHeight, quality);
+        return _thumbNailService.convertToThumbnail(_asset, _thumbHeight, _quality);
     }
 
 
@@ -144,6 +145,6 @@ public class ThumbNail implements ClientElement
      */
     public String getClientId()
     {
-        return assignedClientId;
+        return _assignedClientId;
     }
 }

@@ -29,7 +29,7 @@ import org.chenillekit.ldap.ChenilleKitLDAPConstants;
 import org.slf4j.Logger;
 
 /**
- * @version $Id$
+ * @version $Id: LdapSearchServiceImpl.java 167 2008-07-23 22:05:16Z shomburg $
  */
 public class ReadServiceImpl implements ReadService
 {

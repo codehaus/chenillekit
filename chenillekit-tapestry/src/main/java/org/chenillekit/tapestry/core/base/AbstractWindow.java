@@ -28,12 +28,11 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * creates a window based on jvascript <a href="http://prototype-window.xilinus.com/">window</a> library.
  *
- * @version $Id$
+ * @version $Id: AbstractWindow.java 682 2008-05-20 22:00:02Z homburgs $
  */
 @IncludeJavaScriptLibrary(value = {"${tapestry.scriptaculous}/effects.js", "../components/window/window.js",
         "../components/window/window_effects.js"})
@@ -112,9 +111,6 @@ abstract public class AbstractWindow implements ClientElement
     private String assignedClientId;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
-
-    @Environmental
     private RenderSupport renderSupport;
 
     @Inject
@@ -137,7 +133,7 @@ abstract public class AbstractWindow implements ClientElement
         // Often, these controlName and clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
-        assignedClientId = javascriptSupport.allocateClientId(clientId);
+        assignedClientId = renderSupport.allocateClientId(clientId);
     }
 
     /**

@@ -3,7 +3,7 @@
  * Version 2.0, January 2004
  * http://www.apache.org/licenses/
  *
- * Copyright 2010 by chenillekit.org
+ * Copyright 2008 by chenillekit.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,43 @@
 
 package org.chenillekit.hibernate.daos;
 
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import org.chenillekit.hibernate.AbstractHibernateTest;
 import org.chenillekit.hibernate.entities.Address;
 import org.chenillekit.hibernate.entities.Pseudonym;
 import org.chenillekit.hibernate.entities.User;
+import org.chenillekit.hibernate.factories.TestDAOFactory;
 import org.chenillekit.hibernate.utils.QueryParameter;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @version $Id$
  */
 public class TestUserDAO extends AbstractHibernateTest
 {
+    protected TestDAOFactory daoFactory;
+    protected Session session;
+
     @BeforeTest
     public void setup()
     {
         super.setup();
+        session = sessionFactory.openSession();
+        daoFactory = new TestDAOFactory(session);
     }
 
     @Test
-    public void test_persist_user_entity()
+    public void persist_user_entity()
     {
-        UserDAO userDAO = registry.getService(UserDAO.class);
+        Transaction transaction = session.beginTransaction();
+        UserDAO userDAO = (UserDAO) daoFactory.getUserDAO();
 
         User user = new User("homburgs", "password");
         user.setLastLogin(new Date());
@@ -58,24 +69,27 @@ public class TestUserDAO extends AbstractHibernateTest
         user.getPseudonyms().add(new Pseudonym(user, "trugoy"));
         user.getPseudonyms().add(new Pseudonym(user, "hombi"));
 
-        System.err.println("test_persist_user_entity: " + userDAO);
         userDAO.doSave(user);
+        transaction.commit();
     }
 
-    @Test(dependsOnMethods = {"test_persist_user_entity"})
-    public void test_find_user_entity()
+    @Test(dependsOnMethods = {"persist_user_entity"})
+    public void find_user_entity()
     {
-        UserDAO userDAO = registry.getService(UserDAO.class);
+        UserDAO userDAO = daoFactory.getUserDAO();
+
         List entityList = userDAO.findByQuery("FROM User WHERE loginName = :loginName",
                                               QueryParameter.newInstance("loginName", "homburgs"));
 
         assertEquals(entityList.size(), 1);
     }
 
-    @Test(dependsOnMethods = {"test_persist_user_entity"})
-    public void test_remove_pseudonym_entity()
+    @Test(dependsOnMethods = {"persist_user_entity"})
+    public void remove_pseudonym_entity()
     {
-        UserDAO userDAO = registry.getService(UserDAO.class);
+        Transaction transaction = session.beginTransaction();
+        UserDAO userDAO = daoFactory.getUserDAO();
+
         List<User> entityList = userDAO.findByQuery("FROM User WHERE loginName = :loginName",
                                               QueryParameter.newInstance("loginName", "homburgs"));
 
@@ -89,23 +103,33 @@ public class TestUserDAO extends AbstractHibernateTest
             userDAO.doSave(user);
             assertEquals(user.getPseudonyms().size(), 2);
         }
+
+        transaction.commit();
     }
 
-    @Test(dependsOnMethods = {"test_persist_user_entity"})
-    public void test_group_by_loginname()
+    @Test(dependsOnMethods = {"persist_user_entity"})
+    public void group_by_loginname()
     {
-        UserDAO userDAO = registry.getService(UserDAO.class);
+        UserDAO userDAO = daoFactory.getUserDAO();
+
         String result = (String) userDAO.aggregateOrGroup("SELECT loginName FROM User GROUP BY loginName");
 
         assertEquals(result, "homburgs");
     }
 
-    @Test(dependsOnMethods = {"test_persist_user_entity"})
-    public void test_max_id()
+    @Test(dependsOnMethods = {"persist_user_entity"})
+    public void max_id()
     {
-        UserDAO userDAO = registry.getService(UserDAO.class);
+        UserDAO userDAO = daoFactory.getUserDAO();
+
         long result = (Long) userDAO.aggregateOrGroup("SELECT MAX(id) FROM User");
 
         assertEquals(result, 1);
+    }
+
+    @AfterTest
+    public void afterTest()
+    {
+        sessionFactory.close();
     }
 }
