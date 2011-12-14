@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Apache License
+  ~ Version 2.0, January 2004
+  ~ http://www.apache.org/licenses/
+  ~
+  ~ Copyright 2008 by chenillekit.org
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  -->
+
+<!DOCTYPE document PUBLIC
+        "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+        "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+
+<document>
+
+    <properties>
+        <title>SearcherService</title>
+    </properties>
+
+
+    <body>
+
+        <section name="Searcher Service">
+            
+            <p>
+        		No configuration is needed for this service...
+        	</p>
+
+            <subsection name="using the service">
+
+                <source>
+                    <![CDATA[
+SearcherService service = registry.getService(SearcherService.class);
+Hits hits = (Hits) service.search("content", "manufacturers OR \"British Government Warehouse\"");
+]]>
+                </source>
+
+            </subsection>
+
+        </section>
+
+    </body>
+
+</document>

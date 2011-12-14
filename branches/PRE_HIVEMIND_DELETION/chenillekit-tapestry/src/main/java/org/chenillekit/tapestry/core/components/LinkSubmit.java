@@ -1,0 +1,87 @@
+/*
+ * Apache License
+ * Version 2.0, January 2004
+ * http://www.apache.org/licenses/
+ *
+ * Copyright 2008-2010 by chenillekit.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+package org.chenillekit.tapestry.core.components;
+
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.corelib.mixins.RenderInformals;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+/**
+ * LinkSubmit allows arbitrary page (DOM) elements to submit a form.
+ *
+ * @version $Id$
+ * @since 0.2.0
+ */
+@SupportsInformalParameters
+@Import(library = {"../Chenillekit.js", "ClickSubmit.js"})
+public class LinkSubmit implements ClientElement
+{
+	@Mixin
+	private RenderInformals renderInformals;
+
+	@Inject
+	private ComponentResources resources;
+
+	@Environmental
+	private JavaScriptSupport javascriptSupport;
+
+	/**
+	 * The client-side id.
+	 */
+	private String clientId;
+
+	/**
+	 * Tapestry render phase method.
+	 * Initialize temporary instance variables here.
+	 */
+	void setupRender()
+	{
+		clientId = javascriptSupport.allocateClientId(resources.getId());
+	}
+
+	/**
+	 * Tapestry render phase method.
+	 * Start a tag here, end it in afterRender
+	 *
+	 * @param writer the markup writer
+	 */
+	void beginRender(final MarkupWriter writer)
+	{
+		javascriptSupport.addScript("new Ck.ClickSubmit('%s');", getClientId());
+		writer.element("a", "id", getClientId(), "href", "#");
+	}
+
+	/**
+	 * Tapestry render phase method. End a tag here.
+	 *
+	 * @param writer the markup writer
+	 */
+	void afterRender(final MarkupWriter writer)
+	{
+		writer.end();
+	}
+
+	public String getClientId()
+	{
+		return clientId;
+	}
+}
