@@ -1,0 +1,33 @@
+<!--
+  ~ Apache License
+  ~ Version 2.0, January 2004
+  ~ http://www.apache.org/licenses/
+  ~
+  ~ Copyright 2008-2011 by chenillekit.org
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<head>
+    <title>Restricted TextField</title>
+</head>
+
+<body>
+
+
+<form action="#" t:id="simpleForm">
+    <input type="text" t:id="simpleTextField1"/>
+    <br/>
+    <input type="text" t:id="simpleTextField2"/>
+    <br/>
+    <input t:id="simpleSubmit" type="submit"/>
+</form>
+
+
+</body>
+</html>

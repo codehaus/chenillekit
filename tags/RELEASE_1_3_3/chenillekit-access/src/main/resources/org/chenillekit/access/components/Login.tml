@@ -1,0 +1,48 @@
+<!--
+  ~ Apache License
+  ~ Version 2.0, January 2004
+  ~ http://www.apache.org/licenses/
+  ~
+  ~ Copyright 2008-2011 by chenillekit.org
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  -->
+
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<t:form t:id="chenillekitLoginForm">
+
+		<t:errors banner="message:chenillekit-access-error-banner" />
+
+		<div class="t-beaneditor, cka-login">
+			<div>
+
+				<br />
+
+				<div class="t-beaneditor-row, cka-login-row">
+					<t:label for="chenillekitUsername"/>
+					<t:textfield t:id="chenillekitUsername"
+						validate="required"
+						title="${message:chenillekit-access-username-title}"
+						value="username" />
+				</div>
+
+				<div class="t-beaneditor-row, cka-login-row">
+					<t:label for="chenillekitPassword"/>
+					<t:passwordfield t:id="chenillekitPassword"
+						validate="required"
+						title="${message:chenillekit-access-password-title}"
+						value="password" />
+				</div>
+
+				<t:submit t:id="chenillekitLoginSubmit" value="${message:chenillekit-access-login-submit}"/>
+			</div>
+		</div>
+
+	</t:form>
+
+</div>
