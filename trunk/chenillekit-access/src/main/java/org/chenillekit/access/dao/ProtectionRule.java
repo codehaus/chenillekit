@@ -17,7 +17,7 @@ package org.chenillekit.access.dao;
 import org.chenillekit.access.Logical;
 
 /**
- * @version $Id: ProtectionRule.java 628 2010-02-24 11:05:45Z homburgs $
+ * @version $Id$
  */
 public interface ProtectionRule
 {
